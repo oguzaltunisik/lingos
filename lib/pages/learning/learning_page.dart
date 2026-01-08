@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
+
 import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/term_service.dart';
-import 'package:lingos/services/user_prefs_service.dart';
-import 'package:lingos/services/tts_service.dart';
-import 'package:lingos/widgets/display_action.dart';
+import 'package:lingos/pages/learning/actions/meet_action.dart';
 import 'package:lingos/widgets/completed_action.dart';
+import 'package:lingos/pages/learning/actions/listen_and_select_action.dart';
 
 class LearningPage extends StatefulWidget {
   final Topic topic;
@@ -19,70 +20,52 @@ class LearningPage extends StatefulWidget {
 }
 
 class _LearningPageState extends State<LearningPage> {
-  int _currentIndex = 0;
+  final Random _random = Random();
+  int _currentStep = 0;
   List<Term> _terms = [];
-  String? _nativeLanguage;
-  String? _targetLanguage;
-  late final VoidCallback _prefsListener;
-  bool _showTranslation = false;
 
   @override
   void initState() {
     super.initState();
     _loadData();
-    _showTranslation = UserPrefsService.showTranslationNotifier.value;
-    _prefsListener = () {
-      if (!mounted) return;
-      setState(() {
-        _showTranslation = UserPrefsService.showTranslationNotifier.value;
-      });
-    };
-    UserPrefsService.showTranslationNotifier.addListener(_prefsListener);
   }
 
   Future<void> _loadData() async {
     final terms = TermService.getTermsByTopic(widget.topic.id);
-    final nativeLang = await LanguageService.getNativeLanguage();
-    final targetLang = await LanguageService.getTargetLanguage();
 
     setState(() {
       _terms = terms;
-      _nativeLanguage = nativeLang;
-      _targetLanguage = targetLang;
     });
-    await _speakCurrentTerm();
   }
 
-  void _nextTerm() {
-    if (_currentIndex < _terms.length) {
+  void _nextStep() {
+    final totalSteps = _totalSteps;
+    if (_currentStep < totalSteps) {
       setState(() {
-        _currentIndex++;
+        _currentStep++;
       });
-      if (_currentIndex < _terms.length) {
-        _speakCurrentTerm();
-      }
     }
   }
 
   @override
   void dispose() {
-    UserPrefsService.showTranslationNotifier.removeListener(_prefsListener);
-    TtsService.stop();
     super.dispose();
   }
 
   double get _progress {
     if (_terms.isEmpty) return 0.0;
-    return (_currentIndex + 1) / _terms.length;
+    return (_currentStep + 1) / _totalSteps;
   }
 
-  Future<void> _speakCurrentTerm() async {
-    if (_terms.isEmpty || _targetLanguage == null) return;
-    final term = _terms[_currentIndex];
-    await TtsService.speakTerm(
-      text: term.getText(_targetLanguage!),
-      languageCode: _targetLanguage!,
-    );
+  int get _totalSteps => _terms.length * 2;
+
+  Term _getDistractorTerm(int correctIndex) {
+    if (_terms.length < 2) return _terms[correctIndex];
+    int candidate = correctIndex;
+    while (candidate == correctIndex) {
+      candidate = _random.nextInt(_terms.length);
+    }
+    return _terms[candidate];
   }
 
   @override
@@ -93,8 +76,8 @@ class _LearningPageState extends State<LearningPage> {
         final localizations = AppLocalizations(languageCode);
 
         final isLoading = _terms.isEmpty;
-        final currentTerm = (!isLoading && _currentIndex < _terms.length)
-            ? _terms[_currentIndex]
+        final currentTerm = (!isLoading && _currentStep < _totalSteps)
+            ? _terms[_currentStep ~/ 2]
             : null;
 
         final appBar = AppBar(
@@ -134,32 +117,33 @@ class _LearningPageState extends State<LearningPage> {
         }
 
         // Completed view when terms finished
-        if (_currentIndex >= _terms.length) {
+        if (_currentStep >= _totalSteps) {
           return Scaffold(
             backgroundColor: widget.topic.lightColor,
             appBar: appBar,
             body: CompletedAction(
               topic: widget.topic,
-              title: localizations.sessionCompleted,
-              homeLabel: localizations.homePageButton,
               onHome: () => Navigator.of(context).pop(),
             ),
           );
         }
 
         final term = currentTerm!;
+        final isDisplayStep = _currentStep % 2 == 0;
+        final body = isDisplayStep
+            ? MeetAction(topic: widget.topic, term: term, onNext: _nextStep)
+            : ListenAndSelectAction(
+                topic: widget.topic,
+                term: term,
+                distractorTerm: _getDistractorTerm(_currentStep ~/ 2),
+                onNext: _nextStep,
+                nextLabel: localizations.nextButton,
+              );
+
         return Scaffold(
           backgroundColor: widget.topic.lightColor,
           appBar: appBar,
-          body: DisplayAction(
-            topic: widget.topic,
-            term: term,
-            showTranslation: _showTranslation,
-            nativeLanguageCode: _nativeLanguage,
-            targetLanguageCode: _targetLanguage,
-            onNext: _nextTerm,
-            nextLabel: localizations.nextButton,
-          ),
+          body: body,
         );
       },
     );

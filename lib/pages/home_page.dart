@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/app_localizations.dart';
-import 'package:lingos/pages/learning_page.dart';
+import 'package:lingos/pages/learning/learning_page.dart';
 import 'package:lingos/pages/settings_page.dart';
-import 'package:lingos/models/topic.dart';
+import 'package:lingos/services/term_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,6 +19,15 @@ class _HomePageState extends State<HomePage> {
       valueListenable: LanguageService.appLanguageNotifier,
       builder: (context, languageCode, child) {
         final localizations = AppLocalizations(languageCode);
+
+        final topics = TermService.getTopics();
+
+        if (topics.isEmpty) {
+          return Scaffold(
+            appBar: AppBar(title: Text(localizations.appTitle)),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
 
         return Scaffold(
           appBar: AppBar(
@@ -54,7 +63,7 @@ class _HomePageState extends State<HomePage> {
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                     childAspectRatio: 1.05,
-                    children: Topic.values.map((topic) {
+                    children: topics.map((topic) {
                       return Card(
                         color: topic.lightColor,
                         surfaceTintColor: topic.lightColor,
@@ -63,7 +72,6 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: InkWell(
-                          borderRadius: BorderRadius.circular(16),
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(

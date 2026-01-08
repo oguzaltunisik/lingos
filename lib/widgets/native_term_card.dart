@@ -7,13 +7,11 @@ class NativeTermCard extends StatelessWidget {
     super.key,
     required this.term,
     required this.topic,
-    required this.showTranslation,
     required this.nativeLanguageText,
   });
 
   final Term term;
   final Topic topic;
-  final bool showTranslation;
   final String? nativeLanguageText;
 
   @override
@@ -25,7 +23,7 @@ class NativeTermCard extends StatelessWidget {
         children: [
           Text(term.emoji, style: const TextStyle(fontSize: 120)),
           const SizedBox(height: 16),
-          if (showTranslation && nativeLanguageText != null)
+          if (nativeLanguageText != null)
             Text(
               nativeLanguageText!,
               style: TextStyle(fontSize: 18, color: topic.darkColor),

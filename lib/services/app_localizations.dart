@@ -42,9 +42,15 @@ class AppLocalizations {
   String get settingsTitle => _getString('settingsTitle');
   String get languageSettings => _getString('languageSettings');
   String get sessionCompleted => _getString('sessionCompleted');
+  String get correct => _getString('correct');
+  String get incorrect => _getString('incorrect');
 
   // Topics
   String getTopicName(String topicId) {
+    final topic = TermService.getTopicById(topicId);
+    if (topic != null) {
+      return topic.getName(languageCode);
+    }
     return _getString('topic_$topicId');
   }
 
@@ -90,12 +96,8 @@ class AppLocalizations {
     'settingsTitle': 'Settings',
     'languageSettings': 'Language',
     'sessionCompleted': 'Session completed',
-    // Topics
-    'topic_greetings': 'Greetings',
-    'topic_travel': 'Travel',
-    'topic_food': 'Food',
-    'topic_shopping': 'Shopping',
-    'topic_daily_life': 'Daily Life',
+    'correct': 'Correct',
+    'incorrect': 'Incorrect',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -122,12 +124,8 @@ class AppLocalizations {
     'settingsTitle': 'Ayarlar',
     'languageSettings': 'Dil Ayarları',
     'sessionCompleted': 'Oturum tamamlandı',
-    // Topics
-    'topic_greetings': 'Tanışma',
-    'topic_travel': 'Seyahat',
-    'topic_food': 'Yemek',
-    'topic_shopping': 'Alışveriş',
-    'topic_daily_life': 'Günlük Hayat',
+    'correct': 'Doğru',
+    'incorrect': 'Yanlış',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -155,12 +153,8 @@ class AppLocalizations {
     'settingsTitle': 'Asetukset',
     'languageSettings': 'Kieliasetukset',
     'sessionCompleted': 'Istunto valmis',
-    // Topics
-    'topic_greetings': 'Tervehdykset',
-    'topic_travel': 'Matkustaminen',
-    'topic_food': 'Ruoka',
-    'topic_shopping': 'Ostokset',
-    'topic_daily_life': 'Päivittäinen elämä',
+    'correct': 'Oikein',
+    'incorrect': 'Väärin',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',

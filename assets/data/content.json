@@ -1,0 +1,251 @@
+{
+  "topics": [
+    {
+      "id": "animals",
+      "emoji": "🐾",
+      "lightColor": "#E8F3FF",
+      "darkColor": "#1E88E5",
+      "textEn": "animals",
+      "textTr": "hayvanlar",
+      "textFi": "eläimet"
+    },
+    {
+      "id": "colors",
+      "emoji": "🎨",
+      "lightColor": "#FFF4E5",
+      "darkColor": "#EF6C00",
+      "textEn": "colors",
+      "textTr": "renkler",
+      "textFi": "värit"
+    },
+    {
+      "id": "numbers",
+      "emoji": "🔢",
+      "lightColor": "#EAF4EA",
+      "darkColor": "#2E7D32",
+      "textEn": "numbers",
+      "textTr": "sayılar",
+      "textFi": "numerot"
+    },
+    {
+      "id": "shapes",
+      "emoji": "🟠",
+      "lightColor": "#F2EAF5",
+      "darkColor": "#8E24AA",
+      "textEn": "shapes",
+      "textTr": "şekiller",
+      "textFi": "muodot"
+    },
+    {
+      "id": "directions",
+      "emoji": "🧭",
+      "lightColor": "#E8EEF3",
+      "darkColor": "#3949AB",
+      "textEn": "directions",
+      "textTr": "yönler",
+      "textFi": "suunnat"
+    }
+  ],
+  "terms": [
+    {
+      "id": "animals_1",
+      "topicIds": ["animals"],
+      "textEn": "cat",
+      "textTr": "kedi",
+      "textFi": "kissa",
+      "emoji": "🐱"
+    },
+    {
+      "id": "animals_2",
+      "topicIds": ["animals"],
+      "textEn": "dog",
+      "textTr": "köpek",
+      "textFi": "koira",
+      "emoji": "🐶"
+    },
+    {
+      "id": "animals_3",
+      "topicIds": ["animals"],
+      "textEn": "bird",
+      "textTr": "kuş",
+      "textFi": "lintu",
+      "emoji": "🐦"
+    },
+    {
+      "id": "animals_4",
+      "topicIds": ["animals"],
+      "textEn": "fish",
+      "textTr": "balık",
+      "textFi": "kala",
+      "emoji": "🐟"
+    },
+    {
+      "id": "animals_5",
+      "topicIds": ["animals"],
+      "textEn": "horse",
+      "textTr": "at",
+      "textFi": "hevonen",
+      "emoji": "🐴"
+    },
+    {
+      "id": "colors_1",
+      "topicIds": ["colors"],
+      "textEn": "red",
+      "textTr": "kırmızı",
+      "textFi": "punainen",
+      "emoji": "🟥"
+    },
+    {
+      "id": "colors_2",
+      "topicIds": ["colors"],
+      "textEn": "blue",
+      "textTr": "mavi",
+      "textFi": "sininen",
+      "emoji": "🟦"
+    },
+    {
+      "id": "colors_3",
+      "topicIds": ["colors"],
+      "textEn": "green",
+      "textTr": "yeşil",
+      "textFi": "vihreä",
+      "emoji": "🟩"
+    },
+    {
+      "id": "colors_4",
+      "topicIds": ["colors"],
+      "textEn": "yellow",
+      "textTr": "sarı",
+      "textFi": "keltainen",
+      "emoji": "🟨"
+    },
+    {
+      "id": "colors_5",
+      "topicIds": ["colors"],
+      "textEn": "black",
+      "textTr": "siyah",
+      "textFi": "musta",
+      "emoji": "⬛"
+    },
+    {
+      "id": "numbers_1",
+      "topicIds": ["numbers"],
+      "textEn": "one",
+      "textTr": "bir",
+      "textFi": "yksi",
+      "emoji": "1️⃣"
+    },
+    {
+      "id": "numbers_2",
+      "topicIds": ["numbers"],
+      "textEn": "two",
+      "textTr": "iki",
+      "textFi": "kaksi",
+      "emoji": "2️⃣"
+    },
+    {
+      "id": "numbers_3",
+      "topicIds": ["numbers"],
+      "textEn": "three",
+      "textTr": "üç",
+      "textFi": "kolme",
+      "emoji": "3️⃣"
+    },
+    {
+      "id": "numbers_4",
+      "topicIds": ["numbers"],
+      "textEn": "four",
+      "textTr": "dört",
+      "textFi": "neljä",
+      "emoji": "4️⃣"
+    },
+    {
+      "id": "numbers_5",
+      "topicIds": ["numbers"],
+      "textEn": "five",
+      "textTr": "beş",
+      "textFi": "viisi",
+      "emoji": "5️⃣"
+    },
+    {
+      "id": "shapes_1",
+      "topicIds": ["shapes"],
+      "textEn": "circle",
+      "textTr": "daire",
+      "textFi": "ympyrä",
+      "emoji": "⚪"
+    },
+    {
+      "id": "shapes_2",
+      "topicIds": ["shapes"],
+      "textEn": "square",
+      "textTr": "kare",
+      "textFi": "neliö",
+      "emoji": "🟥"
+    },
+    {
+      "id": "shapes_3",
+      "topicIds": ["shapes"],
+      "textEn": "triangle",
+      "textTr": "üçgen",
+      "textFi": "kolmio",
+      "emoji": "🔺"
+    },
+    {
+      "id": "shapes_4",
+      "topicIds": ["shapes"],
+      "textEn": "rectangle",
+      "textTr": "dikdörtgen",
+      "textFi": "suorakulmio",
+      "emoji": "🟦"
+    },
+    {
+      "id": "shapes_5",
+      "topicIds": ["shapes"],
+      "textEn": "star",
+      "textTr": "yıldız",
+      "textFi": "tähti",
+      "emoji": "⭐"
+    },
+    {
+      "id": "directions_1",
+      "topicIds": ["directions"],
+      "textEn": "left",
+      "textTr": "sol",
+      "textFi": "vasen",
+      "emoji": "⬅️"
+    },
+    {
+      "id": "directions_2",
+      "topicIds": ["directions"],
+      "textEn": "right",
+      "textTr": "sağ",
+      "textFi": "oikea",
+      "emoji": "➡️"
+    },
+    {
+      "id": "directions_3",
+      "topicIds": ["directions"],
+      "textEn": "forward",
+      "textTr": "ileri",
+      "textFi": "eteenpäin",
+      "emoji": "⬆️"
+    },
+    {
+      "id": "directions_4",
+      "topicIds": ["directions"],
+      "textEn": "backward",
+      "textTr": "geri",
+      "textFi": "taaksepäin",
+      "emoji": "⬇️"
+    },
+    {
+      "id": "directions_5",
+      "topicIds": ["directions"],
+      "textEn": "up",
+      "textTr": "yukarı",
+      "textFi": "ylös",
+      "emoji": "🔼"
+    }
+  ]
+}

@@ -9,6 +9,7 @@ class TtsService {
     await _tts.setVolume(1.0);
     await _tts.setSpeechRate(0.5);
     await _tts.setPitch(1.0);
+    await _tts.awaitSpeakCompletion(true);
     _initialized = true;
   }
 

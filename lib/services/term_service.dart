@@ -1,24 +1,31 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:lingos/models/term.dart';
+import 'package:lingos/models/topic.dart';
 
 class TermService {
   static List<Term>? _terms;
+  static List<Topic>? _topics;
   static bool _isLoading = false;
 
-  // Load terms from JSON file
+  // Load topics and terms from JSON file
   static Future<void> loadTerms() async {
-    if (_isLoading || _terms != null) return;
+    if (_isLoading || (_terms != null && _topics != null)) return;
 
     _isLoading = true;
     try {
       final String response = await rootBundle.loadString(
-        'assets/data/terms.json',
+        'assets/data/content.json',
       );
-      final List<dynamic> data = json.decode(response);
-      _terms = data.map((json) => Term.fromJson(json)).toList();
+      final Map<String, dynamic> data = json.decode(response);
+      final topicsJson = (data['topics'] as List?) ?? [];
+      final termsJson = (data['terms'] as List?) ?? [];
+
+      _topics = topicsJson.map((json) => Topic.fromJson(json)).toList();
+      _terms = termsJson.map((json) => Term.fromJson(json)).toList();
     } catch (e) {
       _terms = [];
+      _topics = [];
     } finally {
       _isLoading = false;
     }
@@ -27,6 +34,19 @@ class TermService {
   // Get all terms
   static List<Term> getAllTerms() {
     return _terms ?? [];
+  }
+
+  // Get all topics
+  static List<Topic> getTopics() {
+    return _topics ?? [];
+  }
+
+  static Topic? getTopicById(String topicId) {
+    try {
+      return getTopics().firstWhere((t) => t.id == topicId);
+    } catch (e) {
+      return null;
+    }
   }
 
   // Get terms by topic ID

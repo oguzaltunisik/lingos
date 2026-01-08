@@ -3,14 +3,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:lingos/pages/gate_page.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/term_service.dart';
-import 'package:lingos/services/user_prefs_service.dart';
 import 'package:lingos/services/tts_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LanguageService.initializeAppLanguage();
   await TermService.loadTerms();
-  await UserPrefsService.init();
   await TtsService.init();
   runApp(const MyApp());
 }

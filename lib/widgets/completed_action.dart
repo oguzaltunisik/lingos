@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:lingos/models/topic.dart';
+import 'package:lingos/services/app_localizations.dart';
+import 'package:lingos/services/language_service.dart';
+import 'package:lingos/widgets/action_button.dart';
 
 class CompletedAction extends StatelessWidget {
-  const CompletedAction({
-    super.key,
-    required this.topic,
-    required this.title,
-    required this.homeLabel,
-    required this.onHome,
-  });
+  const CompletedAction({super.key, required this.topic, required this.onHome});
 
   final Topic topic;
-  final String title;
-  final String homeLabel;
   final VoidCallback onHome;
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations(LanguageService.appLanguageNotifier.value);
+
     return Column(
       children: [
         Expanded(
@@ -29,7 +26,7 @@ class CompletedAction extends StatelessWidget {
                   Text('🎉', style: const TextStyle(fontSize: 80)),
                   const SizedBox(height: 16),
                   Text(
-                    title,
+                    loc.sessionCompleted,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -42,20 +39,10 @@ class CompletedAction extends StatelessWidget {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: onHome,
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: topic.darkColor,
-                foregroundColor: Colors.white,
-              ),
-              child: Text(homeLabel, style: const TextStyle(fontSize: 18)),
-            ),
-          ),
+        ActionButton(
+          topic: topic,
+          label: loc.homePageButton,
+          onPressed: onHome,
         ),
       ],
     );
