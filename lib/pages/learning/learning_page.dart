@@ -10,6 +10,7 @@ import 'package:lingos/pages/learning/actions/meet_action.dart';
 import 'package:lingos/pages/learning/actions/completed_action.dart';
 import 'package:lingos/pages/learning/actions/select_action.dart';
 import 'package:lingos/pages/learning/actions/merge_action.dart';
+import 'package:lingos/pages/learning/actions/pair_action.dart';
 
 class LearningPage extends StatefulWidget {
   final Topic topic;
@@ -58,7 +59,7 @@ class _LearningPageState extends State<LearningPage> {
     return (_currentStep + 1) / _totalSteps;
   }
 
-  int get _totalSteps => _terms.length * 3;
+  int get _totalSteps => _terms.length * 3 + 1;
 
   Term _getDistractorTerm(int correctIndex) {
     if (_terms.length < 2) return _terms[correctIndex];
@@ -75,7 +76,9 @@ class _LearningPageState extends State<LearningPage> {
       valueListenable: LanguageService.appLanguageNotifier,
       builder: (context, languageCode, child) {
         final isLoading = _terms.isEmpty;
-        final currentTerm = (!isLoading && _currentStep < _totalSteps)
+        final isPairAction = !isLoading && _currentStep == _totalSteps - 1;
+        final currentTerm =
+            (!isLoading && !isPairAction && _currentStep < _totalSteps)
             ? _terms[_currentStep ~/ 3]
             : null;
         final scheme = Theme.of(context).colorScheme;
@@ -122,6 +125,22 @@ class _LearningPageState extends State<LearningPage> {
           return Scaffold(
             appBar: appBar,
             body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        // Pair action at the end (before completion)
+        if (isPairAction) {
+          // Show pair action with a subset of terms (4-6 terms)
+          final pairTerms = _terms.length > 6
+              ? (_terms.toList()..shuffle(_random)).take(6).toList()
+              : _terms;
+          return Scaffold(
+            appBar: appBar,
+            body: PairAction(
+              topic: widget.topic,
+              terms: pairTerms,
+              onNext: _nextStep,
+            ),
           );
         }
 

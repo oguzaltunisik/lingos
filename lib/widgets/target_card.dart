@@ -12,6 +12,7 @@ class TargetCard extends StatelessWidget {
     this.isSelected = false,
     this.onTap,
     this.overrideColor,
+    this.showIcon = true,
   });
 
   final Topic topic;
@@ -20,6 +21,7 @@ class TargetCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback? onTap;
   final Color? overrideColor;
+  final bool showIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -65,23 +67,24 @@ class TargetCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Positioned(
-                  right: 12,
-                  bottom: 12,
-                  child: MiniIconButton(
-                    icon: Icons.volume_up_rounded,
-                    color: overrideColor != null
-                        ? onPrimary
-                        : (isSelected ? onPrimary : primary),
-                    onPressed: () async {
-                      if (targetText.isEmpty) return;
-                      await TtsService.speakTerm(
-                        text: targetText,
-                        languageCode: languageCode,
-                      );
-                    },
+                if (showIcon)
+                  Positioned(
+                    right: 12,
+                    bottom: 12,
+                    child: MiniIconButton(
+                      icon: Icons.volume_up_rounded,
+                      color: overrideColor != null
+                          ? onPrimary
+                          : (isSelected ? onPrimary : primary),
+                      onPressed: () async {
+                        if (targetText.isEmpty) return;
+                        await TtsService.speakTerm(
+                          text: targetText,
+                          languageCode: languageCode,
+                        );
+                      },
+                    ),
                   ),
-                ),
               ],
             ),
           ),

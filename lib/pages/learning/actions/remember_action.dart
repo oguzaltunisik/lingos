@@ -142,7 +142,11 @@ class _RememberActionState extends State<RememberAction> {
                   child: AnimatedOpacity(
                     opacity: _showNative ? 1.0 : 0.0,
                     duration: const Duration(milliseconds: 300),
-                    child: VisualCard(term: term, topic: topic),
+                    child: VisualCard(
+                      term: term,
+                      topic: topic,
+                      showIcon: false,
+                    ),
                   ),
                 ),
                 if (targetLanguageCode != null)
@@ -154,6 +158,7 @@ class _RememberActionState extends State<RememberAction> {
                         topic: topic,
                         targetText: term.getText(targetLanguageCode),
                         languageCode: targetLanguageCode,
+                        showIcon: false,
                       ),
                     ),
                   ),

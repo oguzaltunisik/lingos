@@ -315,7 +315,11 @@ class _SelectActionState extends State<SelectAction> {
                     ? feedbackColor
                     : null,
                 onSelected: () {
-                  setState(() => _selectedIndex = 0);
+                  final wasSelected = _selectedIndex == 0;
+                  setState(() {
+                    _selectedIndex = wasSelected ? -1 : 0;
+                  });
+                  return !wasSelected; // Return true if selected, false if deselected
                 },
               ),
             ),
@@ -328,7 +332,11 @@ class _SelectActionState extends State<SelectAction> {
                     ? feedbackColor
                     : null,
                 onSelected: () {
-                  setState(() => _selectedIndex = 1);
+                  final wasSelected = _selectedIndex == 1;
+                  setState(() {
+                    _selectedIndex = wasSelected ? -1 : 1;
+                  });
+                  return !wasSelected; // Return true if selected, false if deselected
                 },
               ),
             ),

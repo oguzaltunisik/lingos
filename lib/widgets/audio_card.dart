@@ -17,7 +17,7 @@ class AudioCard extends StatelessWidget {
   final Topic topic;
   final Term term;
   final bool isSelected;
-  final VoidCallback? onSelected;
+  final bool Function()? onSelected; // Returns true if should play TTS
   final Color? overrideColor;
 
   @override
@@ -37,14 +37,19 @@ class AudioCard extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () async {
-          // First update selection state
-          onSelected?.call();
-          // Then play TTS
-          final targetLang = await LanguageService.getTargetLanguage();
-          if (targetLang != null) {
-            final text = term.getText(targetLang);
-            if (text.isNotEmpty) {
-              await TtsService.speakTerm(text: text, languageCode: targetLang);
+          // Update selection state and check if should play TTS
+          final shouldPlayTts = onSelected?.call() ?? false;
+          // Play TTS only if selection was made (not deselected)
+          if (shouldPlayTts) {
+            final targetLang = await LanguageService.getTargetLanguage();
+            if (targetLang != null) {
+              final text = term.getText(targetLang);
+              if (text.isNotEmpty) {
+                await TtsService.speakTerm(
+                  text: text,
+                  languageCode: targetLang,
+                );
+              }
             }
           }
         },

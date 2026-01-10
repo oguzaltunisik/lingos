@@ -14,6 +14,7 @@ class VisualCard extends StatefulWidget {
     this.isSelected = false,
     this.onTap,
     this.overrideColor,
+    this.showIcon = true,
   });
 
   final Term term;
@@ -22,6 +23,7 @@ class VisualCard extends StatefulWidget {
   final bool isSelected;
   final VoidCallback? onTap;
   final Color? overrideColor;
+  final bool showIcon;
 
   @override
   State<VisualCard> createState() => _VisualCardState();
@@ -141,6 +143,8 @@ class _VisualCardState extends State<VisualCard> {
     );
 
     if (translationText == null) return card;
+
+    if (!widget.showIcon) return card;
 
     return Stack(
       children: [

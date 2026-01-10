@@ -62,6 +62,7 @@ class AppLocalizations {
       _getString('actionQuestionToTargetMerge');
   String get actionQuestionToTarget => _getString('actionQuestionToTarget');
   String get actionQuestionToAudio => _getString('actionQuestionToAudio');
+  String get actionPair => _getString('actionPair');
 
   // Topics
   String getTopicName(String topicId) {
@@ -132,6 +133,7 @@ class AppLocalizations {
     'actionVisualToTarget': 'See it, pick the word',
     'actionTargetToVisual': 'Read it, pick the visual',
     'actionTargetToAudio': 'Read it, pick the audio',
+    'actionPair': 'Match pairs',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -176,6 +178,7 @@ class AppLocalizations {
     'actionVisualToTarget': 'Bak, doğru kelimeyi seç',
     'actionTargetToVisual': 'Oku, doğru görseli seç',
     'actionTargetToAudio': 'Oku, doğru sesi seç',
+    'actionPair': 'Eşleştir',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -221,6 +224,7 @@ class AppLocalizations {
     'actionVisualToTarget': 'Katso ja valitse sana',
     'actionTargetToVisual': 'Lue ja valitse kuva',
     'actionTargetToAudio': 'Lue ja valitse ääni',
+    'actionPair': 'Parita',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
