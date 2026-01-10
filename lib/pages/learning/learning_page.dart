@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide SelectAction;
 import 'dart:math';
 
 import 'package:lingos/models/topic.dart';
@@ -7,8 +7,9 @@ import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/term_service.dart';
 import 'package:lingos/pages/learning/actions/meet_action.dart';
-import 'package:lingos/widgets/completed_action.dart';
-import 'package:lingos/pages/learning/actions/listen_and_select_action.dart';
+import 'package:lingos/pages/learning/actions/completed_action.dart';
+import 'package:lingos/pages/learning/actions/select_action.dart';
+import 'package:lingos/pages/learning/actions/merge_action.dart';
 
 class LearningPage extends StatefulWidget {
   final Topic topic;
@@ -57,7 +58,7 @@ class _LearningPageState extends State<LearningPage> {
     return (_currentStep + 1) / _totalSteps;
   }
 
-  int get _totalSteps => _terms.length * 2;
+  int get _totalSteps => _terms.length * 3;
 
   Term _getDistractorTerm(int correctIndex) {
     if (_terms.length < 2) return _terms[correctIndex];
@@ -73,16 +74,13 @@ class _LearningPageState extends State<LearningPage> {
     return ValueListenableBuilder<String>(
       valueListenable: LanguageService.appLanguageNotifier,
       builder: (context, languageCode, child) {
-        final localizations = AppLocalizations(languageCode);
-
         final isLoading = _terms.isEmpty;
         final currentTerm = (!isLoading && _currentStep < _totalSteps)
-            ? _terms[_currentStep ~/ 2]
+            ? _terms[_currentStep ~/ 3]
             : null;
+        final scheme = Theme.of(context).colorScheme;
 
         final appBar = AppBar(
-          backgroundColor: widget.topic.lightColor,
-          foregroundColor: widget.topic.darkColor,
           elevation: 0,
           scrolledUnderElevation: 0,
           title: Padding(
@@ -93,24 +91,35 @@ class _LearningPageState extends State<LearningPage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: widget.topic.darkColor.withValues(alpha: 0.4),
+                    color: scheme.primary.withValues(alpha: 0.4),
                     width: 1,
                   ),
                 ),
                 child: LinearProgressIndicator(
                   value: isLoading ? null : _progress,
                   minHeight: 6,
-                  color: widget.topic.darkColor,
-                  backgroundColor: widget.topic.lightColor,
+                  color: scheme.primary,
+                  backgroundColor: scheme.surfaceContainerHighest,
                 ),
               ),
             ),
           ),
+          actions: [
+            TextButton(
+              onPressed: _currentStep + 1 >= _totalSteps ? null : _nextStep,
+              child: Text(
+                AppLocalizations.current.skipButton,
+                style: TextStyle(
+                  color: scheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         );
 
         if (isLoading) {
           return Scaffold(
-            backgroundColor: widget.topic.lightColor,
             appBar: appBar,
             body: const Center(child: CircularProgressIndicator()),
           );
@@ -119,7 +128,6 @@ class _LearningPageState extends State<LearningPage> {
         // Completed view when terms finished
         if (_currentStep >= _totalSteps) {
           return Scaffold(
-            backgroundColor: widget.topic.lightColor,
             appBar: appBar,
             body: CompletedAction(
               topic: widget.topic,
@@ -129,22 +137,48 @@ class _LearningPageState extends State<LearningPage> {
         }
 
         final term = currentTerm!;
-        final isDisplayStep = _currentStep % 2 == 0;
-        final body = isDisplayStep
-            ? MeetAction(topic: widget.topic, term: term, onNext: _nextStep)
-            : ListenAndSelectAction(
-                topic: widget.topic,
-                term: term,
-                distractorTerm: _getDistractorTerm(_currentStep ~/ 2),
-                onNext: _nextStep,
-                nextLabel: localizations.nextButton,
-              );
+        final stepMod = _currentStep % 3;
+        final hasQuestions =
+            term.questions != null && term.questions!.isNotEmpty;
+        Widget body;
+        if (stepMod == 0) {
+          body = MeetAction(topic: widget.topic, term: term, onNext: _nextStep);
+        } else if (stepMod == 1) {
+          final allSelectTypes = SelectActionType.values;
+          final selectTypes = hasQuestions
+              ? allSelectTypes
+              : allSelectTypes
+                    .where(
+                      (t) =>
+                          t != SelectActionType.questionToTarget &&
+                          t != SelectActionType.questionToAudio,
+                    )
+                    .toList();
+          final randomIndex = _random.nextInt(selectTypes.length);
+          body = SelectAction(
+            topic: widget.topic,
+            term: term,
+            distractorTerm: _getDistractorTerm(_currentStep ~/ 3),
+            onNext: _nextStep,
+            type: selectTypes[randomIndex],
+          );
+        } else {
+          final allMergeTypes = MergeActionType.values;
+          final mergeTypes = hasQuestions
+              ? allMergeTypes
+              : allMergeTypes
+                    .where((t) => t != MergeActionType.questionToTarget)
+                    .toList();
+          final randomIndex = _random.nextInt(mergeTypes.length);
+          body = MergeAction(
+            topic: widget.topic,
+            term: term,
+            onNext: _nextStep,
+            type: mergeTypes[randomIndex],
+          );
+        }
 
-        return Scaffold(
-          backgroundColor: widget.topic.lightColor,
-          appBar: appBar,
-          body: body,
-        );
+        return Scaffold(appBar: appBar, body: body);
       },
     );
   }

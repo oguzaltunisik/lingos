@@ -14,12 +14,13 @@ class CompletedAction extends StatelessWidget {
   Widget build(BuildContext context) {
     final loc = AppLocalizations(LanguageService.appLanguageNotifier.value);
 
-    return Column(
-      children: [
-        Expanded(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        spacing: 16,
+        children: [
+          Expanded(
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -30,7 +31,7 @@ class CompletedAction extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: topic.darkColor,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -38,13 +39,9 @@ class CompletedAction extends StatelessWidget {
               ),
             ),
           ),
-        ),
-        ActionButton(
-          topic: topic,
-          label: loc.homePageButton,
-          onPressed: onHome,
-        ),
-      ],
+          ActionButton(label: loc.homePageButton, onPressed: onHome),
+        ],
+      ),
     );
   }
 }

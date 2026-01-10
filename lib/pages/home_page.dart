@@ -47,67 +47,58 @@ class _HomePageState extends State<HomePage> {
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  localizations.startLearning,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 1.05,
-                    children: topics.map((topic) {
-                      return Card(
-                        color: topic.lightColor,
-                        surfaceTintColor: topic.lightColor,
-                        elevation: 1,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    LearningPage(topic: topic),
-                              ),
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  topic.emoji,
-                                  style: const TextStyle(fontSize: 32),
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  localizations.getTopicName(topic.id),
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    color: topic.darkColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+            child: GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 1.05,
+              children: topics.map((topic) {
+                final scheme = Theme.of(context).colorScheme;
+                return Card(
+                  color: scheme.surfaceContainerHighest,
+                  surfaceTintColor: scheme.surfaceContainerHighest,
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => LearningPage(topic: topic),
                         ),
                       );
-                    }).toList(),
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                topic.emoji,
+                                style: const TextStyle(fontSize: 36),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                localizations.getTopicName(topic.id),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: scheme.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                );
+              }).toList(),
             ),
           ),
         );

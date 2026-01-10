@@ -24,7 +24,6 @@ class AppLocalizations {
   String get welcomeMessage => _getString('welcomeMessage');
   String get nativeLanguage => _getString('nativeLanguage');
   String get targetLanguage => _getString('targetLanguage');
-  String get startLearning => _getString('startLearning');
 
   // Language Selection Page
   String get selectLanguages => _getString('selectLanguages');
@@ -44,6 +43,25 @@ class AppLocalizations {
   String get sessionCompleted => _getString('sessionCompleted');
   String get correct => _getString('correct');
   String get incorrect => _getString('incorrect');
+  String get checkButton => _getString('checkButton');
+  String get skipButton => _getString('skipButton');
+  String get alreadyKnowButton => _getString('alreadyKnowButton');
+  String get wantToLearnButton => _getString('wantToLearnButton');
+  String get actionMeet => _getString('actionMeet');
+  String get actionAudioToTarget => _getString('actionAudioToTarget');
+  String get actionRemember => _getString('actionRemember');
+  String get actionVisualToTarget => _getString('actionVisualToTarget');
+  String get actionTargetToVisual => _getString('actionTargetToVisual');
+  String get actionTargetToAudio => _getString('actionTargetToAudio');
+  String get actionAudioToVisual => _getString('actionAudioToVisual');
+  String get actionVisualToAudio => _getString('actionVisualToAudio');
+  String get actionAudioToTargetMerge => _getString('actionAudioToTargetMerge');
+  String get actionVisualToTargetMerge =>
+      _getString('actionVisualToTargetMerge');
+  String get actionQuestionToTargetMerge =>
+      _getString('actionQuestionToTargetMerge');
+  String get actionQuestionToTarget => _getString('actionQuestionToTarget');
+  String get actionQuestionToAudio => _getString('actionQuestionToAudio');
 
   // Topics
   String getTopicName(String topicId) {
@@ -81,7 +99,6 @@ class AppLocalizations {
     'welcomeMessage': 'Welcome to Lingos!',
     'nativeLanguage': 'Native Language:',
     'targetLanguage': 'Target Language:',
-    'startLearning': 'Start learning!',
     'selectLanguages': 'Select Languages',
     'nativeLanguageTitle': 'Native Language',
     'targetLanguageTitle': 'Target Language',
@@ -98,6 +115,23 @@ class AppLocalizations {
     'sessionCompleted': 'Session completed',
     'correct': 'Correct',
     'incorrect': 'Incorrect',
+    'checkButton': 'Check',
+    'skipButton': 'Skip',
+    'alreadyKnowButton': 'I Already Know',
+    'wantToLearnButton': 'I Want to Learn',
+    'actionMeet': 'Meet',
+    'actionAudioToTarget': 'Hear it, pick the word',
+    'actionAudioToVisual': 'Hear it, pick the visual',
+    'actionVisualToAudio': 'See it, pick the audio',
+    'actionAudioToTargetMerge': 'Hear it, build the word',
+    'actionVisualToTargetMerge': 'See it, build the word',
+    'actionQuestionToTargetMerge': 'Read the question, build the word',
+    'actionQuestionToTarget': 'Read the question, pick the word',
+    'actionQuestionToAudio': 'Read the question, pick the audio',
+    'actionRemember': 'Remember',
+    'actionVisualToTarget': 'See it, pick the word',
+    'actionTargetToVisual': 'Read it, pick the visual',
+    'actionTargetToAudio': 'Read it, pick the audio',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -109,7 +143,6 @@ class AppLocalizations {
     'welcomeMessage': 'Lingos\'a Hoş Geldiniz!',
     'nativeLanguage': 'Ana Dil:',
     'targetLanguage': 'Hedef Dil:',
-    'startLearning': 'Öğrenmeye başla!',
     'selectLanguages': 'Dil Seçimi',
     'nativeLanguageTitle': 'Ana Dil',
     'targetLanguageTitle': 'Hedef Dil',
@@ -126,6 +159,23 @@ class AppLocalizations {
     'sessionCompleted': 'Oturum tamamlandı',
     'correct': 'Doğru',
     'incorrect': 'Yanlış',
+    'checkButton': 'Kontrol Et',
+    'skipButton': 'Atla',
+    'alreadyKnowButton': 'Zaten Biliyorum',
+    'wantToLearnButton': 'Öğrenmek İstiyorum',
+    'actionMeet': 'Tanış',
+    'actionAudioToTarget': 'Dinle, doğru kelimeyi seç',
+    'actionAudioToVisual': 'Dinle, doğru görseli seç',
+    'actionVisualToAudio': 'Bak, doğru sesi seç',
+    'actionAudioToTargetMerge': 'Dinle, harfleri birleştir',
+    'actionVisualToTargetMerge': 'Bak, harfleri birleştir',
+    'actionQuestionToTargetMerge': 'Soruyu oku, harfleri birleştir',
+    'actionQuestionToTarget': 'Soruyu oku, doğru kelimeyi seç',
+    'actionQuestionToAudio': 'Soruyu oku, doğru sesi seç',
+    'actionRemember': 'Hatırla',
+    'actionVisualToTarget': 'Bak, doğru kelimeyi seç',
+    'actionTargetToVisual': 'Oku, doğru görseli seç',
+    'actionTargetToAudio': 'Oku, doğru sesi seç',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -137,7 +187,6 @@ class AppLocalizations {
     'welcomeMessage': 'Tervetuloa Lingosiin!',
     'nativeLanguage': 'Äidinkieli:',
     'targetLanguage': 'Kohdekieli:',
-    'startLearning': 'Aloita oppiminen!',
     'selectLanguages': 'Valitse kielet',
     'nativeLanguageTitle': 'Äidinkieli',
     'targetLanguageTitle': 'Kohdekieli',
@@ -155,6 +204,23 @@ class AppLocalizations {
     'sessionCompleted': 'Istunto valmis',
     'correct': 'Oikein',
     'incorrect': 'Väärin',
+    'checkButton': 'Tarkista',
+    'skipButton': 'Ohita',
+    'alreadyKnowButton': 'Tiedän jo',
+    'wantToLearnButton': 'Haluan oppia',
+    'actionMeet': 'Tutustu',
+    'actionAudioToTarget': 'Kuuntele ja valitse sana',
+    'actionAudioToVisual': 'Kuuntele ja valitse kuva',
+    'actionVisualToAudio': 'Katso ja valitse ääni',
+    'actionAudioToTargetMerge': 'Kuuntele ja rakenna sana',
+    'actionVisualToTargetMerge': 'Katso ja rakenna sana',
+    'actionQuestionToTargetMerge': 'Lue kysymys, rakenna sana',
+    'actionQuestionToTarget': 'Lue kysymys, valitse sana',
+    'actionQuestionToAudio': 'Lue kysymys, valitse ääni',
+    'actionRemember': 'Muista',
+    'actionVisualToTarget': 'Katso ja valitse sana',
+    'actionTargetToVisual': 'Lue ja valitse kuva',
+    'actionTargetToAudio': 'Lue ja valitse ääni',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',

@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
   void dispose() {
     LanguageService.appLanguageNotifier.removeListener(_onLanguageChanged);
     super.dispose();
-  }
+}
 
   void _onLanguageChanged() {
     setState(() {
