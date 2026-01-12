@@ -64,6 +64,9 @@ class AppLocalizations {
   String get actionQuestionToAudio => _getString('actionQuestionToAudio');
   String get actionPair => _getString('actionPair');
   String get actionMemory => _getString('actionMemory');
+  String get actionSelectCorrectOption =>
+      _getString('actionSelectCorrectOption');
+  String get actionBuildTerm => _getString('actionBuildTerm');
 
   // Topics
   String getTopicName(String topicId) {
@@ -136,6 +139,8 @@ class AppLocalizations {
     'actionTargetToAudio': 'Read it, pick the audio',
     'actionPair': 'Match',
     'actionMemory': 'Memory',
+    'actionSelectCorrectOption': 'Make a selection',
+    'actionBuildTerm': 'Build the term',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -182,6 +187,8 @@ class AppLocalizations {
     'actionTargetToAudio': 'Oku, doğru sesi seç',
     'actionPair': 'Eşleştir',
     'actionMemory': 'Hafıza',
+    'actionSelectCorrectOption': 'Seçim Yap',
+    'actionBuildTerm': 'Terimi Oluştur',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -229,6 +236,8 @@ class AppLocalizations {
     'actionTargetToAudio': 'Lue ja valitse ääni',
     'actionPair': 'Yhdistä',
     'actionMemory': 'Muisti',
+    'actionSelectCorrectOption': 'Tee valinta',
+    'actionBuildTerm': 'Rakenna termi',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',

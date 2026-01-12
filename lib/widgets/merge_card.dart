@@ -55,43 +55,42 @@ class MergeCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
-      ),
-      child: Center(
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 12,
-          runSpacing: 12,
-          children: shuffledIndices.map((i) {
-            final selected = selectedIndices.contains(i);
-            final chunkText = i < chunks.length ? chunks[i] : '';
-            return Opacity(
-              opacity: selected ? 0 : 1,
-              child: IgnorePointer(
-                ignoring: selected,
-                child: FilterChip(
-                  label: Text(
-                    chunkText,
-                    style: TextStyle(
-                      color: scheme.onPrimary,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 20,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+      child: SingleChildScrollView(
+        child: Center(
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 12,
+            runSpacing: 12,
+            children: shuffledIndices.map((i) {
+              final selected = selectedIndices.contains(i);
+              final chunkText = i < chunks.length ? chunks[i] : '';
+              return Opacity(
+                opacity: selected ? 0 : 1,
+                child: IgnorePointer(
+                  ignoring: selected,
+                  child: FilterChip(
+                    label: Text(
+                      chunkText,
+                      style: TextStyle(
+                        color: scheme.onPrimary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                      ),
+                    ),
+                    selected: false,
+                    onSelected: selected ? null : (_) => onToggle(i),
+                    backgroundColor: primary,
+                    selectedColor: primary,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
                     ),
                   ),
-                  selected: false,
-                  onSelected: selected ? null : (_) => onToggle(i),
-                  backgroundColor: primary,
-                  selectedColor: primary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
                 ),
-              ),
-            );
-          }).toList(),
+              );
+            }).toList(),
+          ),
         ),
       ),
     );

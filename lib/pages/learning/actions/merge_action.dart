@@ -260,13 +260,7 @@ class _MergeActionState extends State<MergeAction> {
   Widget build(BuildContext context) {
     final topic = widget.topic;
     final loc = AppLocalizations.current;
-    final title = _hasAnswered
-        ? loc.actionRemember
-        : (widget.type == MergeActionType.audioToTarget
-              ? loc.actionAudioToTargetMerge
-              : widget.type == MergeActionType.questionToTarget
-              ? loc.actionQuestionToTargetMerge
-              : loc.actionVisualToTargetMerge);
+    final title = _hasAnswered ? loc.actionRemember : loc.actionBuildTerm;
 
     if (_targetText.isEmpty) return const SizedBox.shrink();
 
@@ -288,6 +282,7 @@ class _MergeActionState extends State<MergeAction> {
         children: [
           Text(
             title,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,

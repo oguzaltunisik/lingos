@@ -220,18 +220,7 @@ class _SelectActionState extends State<SelectAction> {
   }
 
   String _title(AppLocalizations loc) {
-    switch (widget.type) {
-      case SelectActionType.audioToTarget:
-        return loc.actionAudioToTarget;
-      case SelectActionType.audioToVisual:
-        return loc.actionAudioToVisual;
-      case SelectActionType.visualToTarget:
-        return loc.actionVisualToTarget;
-      case SelectActionType.targetToVisual:
-        return loc.actionTargetToVisual;
-      case SelectActionType.questionToTarget:
-        return loc.actionQuestionToTarget;
-    }
+    return loc.actionSelectCorrectOption;
   }
 
   Widget _buildTopCard() {
