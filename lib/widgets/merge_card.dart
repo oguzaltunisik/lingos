@@ -43,29 +43,14 @@ class MergeCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final primary = scheme.primary;
 
-    final chips = shuffledIndices.map((i) {
-      final selected = selectedIndices.contains(i);
-      return Opacity(
-        opacity: selected ? 0 : 1,
-        child: IgnorePointer(
-          ignoring: selected,
-          child: FilterChip(
-            label: Text(
-              i < chunks.length ? chunks[i] : '',
-              style: TextStyle(
-                color: selected ? scheme.onPrimary : primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            selected: selected,
-            selectedColor: primary,
-            showCheckmark: false,
-            onSelected: (_) => onToggle(i),
-            side: BorderSide(color: primary.withValues(alpha: 0.3)),
-          ),
-        ),
+    if (chunks.isEmpty || shuffledIndices.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+        child: const Center(child: Text('No chunks available')),
       );
-    }).toList();
+    }
 
     return Container(
       width: double.infinity,
@@ -74,17 +59,40 @@ class MergeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         color: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 12,
-        children: [
-          Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 8,
-            runSpacing: 8,
-            children: chips,
-          ),
-        ],
+      child: Center(
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 12,
+          runSpacing: 12,
+          children: shuffledIndices.map((i) {
+            final selected = selectedIndices.contains(i);
+            final chunkText = i < chunks.length ? chunks[i] : '';
+            return Opacity(
+              opacity: selected ? 0 : 1,
+              child: IgnorePointer(
+                ignoring: selected,
+                child: FilterChip(
+                  label: Text(
+                    chunkText,
+                    style: TextStyle(
+                      color: scheme.onPrimary,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                    ),
+                  ),
+                  selected: false,
+                  onSelected: selected ? null : (_) => onToggle(i),
+                  backgroundColor: primary,
+                  selectedColor: primary,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

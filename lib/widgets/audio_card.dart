@@ -9,29 +9,24 @@ class AudioCard extends StatelessWidget {
     super.key,
     required this.topic,
     required this.term,
-    this.isSelected = false,
     this.onSelected,
     this.overrideColor,
+    this.showBorder = false,
   });
 
   final Topic topic;
   final Term term;
-  final bool isSelected;
   final bool Function()? onSelected; // Returns true if should play TTS
   final Color? overrideColor;
+  final bool showBorder;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final primary = overrideColor ?? scheme.primary;
     final onPrimary = scheme.onPrimary;
-    final bgColor =
-        overrideColor ?? (isSelected ? primary : Colors.transparent);
-    final iconColor = overrideColor != null
-        ? onPrimary
-        : isSelected
-        ? onPrimary
-        : primary;
+    final bgColor = overrideColor ?? Colors.transparent;
+    final iconColor = overrideColor != null ? onPrimary : primary;
 
     return Material(
       color: Colors.transparent,
@@ -58,6 +53,12 @@ class AudioCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             color: bgColor,
+            border: showBorder
+                ? Border.all(
+                    color: primary.withValues(alpha: 0.3),
+                    width: 1,
+                  )
+                : null,
           ),
           child: Center(
             child: Icon(Icons.volume_up_rounded, size: 40, color: iconColor),

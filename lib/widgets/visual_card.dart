@@ -11,19 +11,19 @@ class VisualCard extends StatefulWidget {
     required this.term,
     required this.topic,
     this.translationInitiallyVisible = false,
-    this.isSelected = false,
     this.onTap,
     this.overrideColor,
     this.showIcon = true,
+    this.showBorder = false,
   });
 
   final Term term;
   final Topic topic;
   final bool translationInitiallyVisible;
-  final bool isSelected;
   final VoidCallback? onTap;
   final Color? overrideColor;
   final bool showIcon;
+  final bool showBorder;
 
   @override
   State<VisualCard> createState() => _VisualCardState();
@@ -82,19 +82,16 @@ class _VisualCardState extends State<VisualCard> {
         final scheme = Theme.of(context).colorScheme;
         final primary = widget.overrideColor ?? scheme.primary;
         final onPrimary = scheme.onPrimary;
-        final bgColor =
-            widget.overrideColor ??
-            (widget.isSelected ? primary : Colors.transparent);
-        final fgColor = widget.overrideColor != null
-            ? onPrimary
-            : widget.isSelected
-            ? onPrimary
-            : primary;
+        final bgColor = widget.overrideColor ?? Colors.transparent;
+        final fgColor = widget.overrideColor != null ? onPrimary : primary;
 
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             color: bgColor,
+            border: widget.showBorder
+                ? Border.all(color: primary.withValues(alpha: 0.3), width: 1)
+                : null,
           ),
           child: Center(
             child: FittedBox(
@@ -154,7 +151,7 @@ class _VisualCardState extends State<VisualCard> {
           bottom: 12,
           child: MiniIconButton(
             icon: Icons.translate_rounded,
-            color: widget.isSelected
+            color: widget.overrideColor != null
                 ? Theme.of(context).colorScheme.onPrimary
                 : Theme.of(context).colorScheme.primary,
             onPressed: _isSpeaking ? null : _speakAndShowTranslation,

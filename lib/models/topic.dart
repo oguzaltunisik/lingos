@@ -15,11 +15,11 @@ class Topic {
 
   factory Topic.fromJson(Map<String, dynamic> json) {
     return Topic(
-      id: json['id'] as String? ?? '',
-      emoji: json['emoji'] as String? ?? '',
-      textEn: (json['textEn'] as String? ?? ''),
-      textTr: (json['textTr'] as String? ?? ''),
-      textFi: (json['textFi'] as String? ?? ''),
+      id: json['id'] as String,
+      emoji: json['emoji'] as String,
+      textEn: json['textEn'] as String,
+      textTr: json['textTr'] as String,
+      textFi: json['textFi'] as String,
     );
   }
 
@@ -30,8 +30,9 @@ class Topic {
       case 'fi':
         return textFi;
       case 'en':
-      default:
         return textEn;
+      default:
+        throw ArgumentError('Unsupported language code: $languageCode');
     }
   }
 }

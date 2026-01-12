@@ -28,5 +28,9 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Lingos needs microphone access to recognize your speech for language learning exercises.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Lingos needs speech recognition to convert your speech to text for language learning exercises.</string>
 </dict>
 </plist>

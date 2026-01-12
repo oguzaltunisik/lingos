@@ -9,19 +9,19 @@ class TargetCard extends StatelessWidget {
     required this.topic,
     required this.targetText,
     required this.languageCode,
-    this.isSelected = false,
     this.onTap,
     this.overrideColor,
     this.showIcon = true,
+    this.showBorder = false,
   });
 
   final Topic topic;
   final String targetText;
   final String languageCode;
-  final bool isSelected;
   final VoidCallback? onTap;
   final Color? overrideColor;
   final bool showIcon;
+  final bool showBorder;
 
   @override
   Widget build(BuildContext context) {
@@ -30,13 +30,8 @@ class TargetCard extends StatelessWidget {
         final scheme = Theme.of(context).colorScheme;
         final primary = overrideColor ?? scheme.primary;
         final onPrimary = scheme.onPrimary;
-        final bgColor =
-            overrideColor ?? (isSelected ? primary : Colors.transparent);
-        final fgColor = overrideColor != null
-            ? onPrimary
-            : isSelected
-            ? onPrimary
-            : primary;
+        final bgColor = overrideColor ?? Colors.transparent;
+        final fgColor = overrideColor != null ? onPrimary : primary;
         return Material(
           color: Colors.transparent,
           child: InkWell(
@@ -48,6 +43,12 @@ class TargetCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     color: bgColor,
+                    border: showBorder
+                        ? Border.all(
+                            color: primary.withValues(alpha: 0.3),
+                            width: 1,
+                          )
+                        : null,
                   ),
                   child: Center(
                     child: FittedBox(
@@ -73,9 +74,7 @@ class TargetCard extends StatelessWidget {
                     bottom: 12,
                     child: MiniIconButton(
                       icon: Icons.volume_up_rounded,
-                      color: overrideColor != null
-                          ? onPrimary
-                          : (isSelected ? onPrimary : primary),
+                      color: overrideColor != null ? onPrimary : primary,
                       onPressed: () async {
                         if (targetText.isEmpty) return;
                         await TtsService.speakTerm(

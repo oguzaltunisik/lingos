@@ -6,11 +6,12 @@ import 'package:lingos/models/term.dart';
 import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/term_service.dart';
-import 'package:lingos/pages/learning/actions/meet_action.dart';
+import 'package:lingos/pages/learning/actions/display_action.dart';
 import 'package:lingos/pages/learning/actions/completed_action.dart';
+import 'package:lingos/pages/learning/actions/memory_action.dart';
+import 'package:lingos/pages/learning/actions/pair_action.dart';
 import 'package:lingos/pages/learning/actions/select_action.dart';
 import 'package:lingos/pages/learning/actions/merge_action.dart';
-import 'package:lingos/pages/learning/actions/pair_action.dart';
 
 class LearningPage extends StatefulWidget {
   final Topic topic;
@@ -49,17 +50,12 @@ class _LearningPageState extends State<LearningPage> {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   double get _progress {
     if (_terms.isEmpty) return 0.0;
     return (_currentStep + 1) / _totalSteps;
   }
 
-  int get _totalSteps => _terms.length * 3 + 1;
+  int get _totalSteps => _terms.length * 5; // meet, memory, pair, select, merge
 
   Term _getDistractorTerm(int correctIndex) {
     if (_terms.length < 2) return _terms[correctIndex];
@@ -76,10 +72,8 @@ class _LearningPageState extends State<LearningPage> {
       valueListenable: LanguageService.appLanguageNotifier,
       builder: (context, languageCode, child) {
         final isLoading = _terms.isEmpty;
-        final isPairAction = !isLoading && _currentStep == _totalSteps - 1;
-        final currentTerm =
-            (!isLoading && !isPairAction && _currentStep < _totalSteps)
-            ? _terms[_currentStep ~/ 3]
+        final currentTerm = (!isLoading && _currentStep < _totalSteps)
+            ? _terms[_currentStep ~/ 5]
             : null;
         final scheme = Theme.of(context).colorScheme;
 
@@ -128,22 +122,6 @@ class _LearningPageState extends State<LearningPage> {
           );
         }
 
-        // Pair action at the end (before completion)
-        if (isPairAction) {
-          // Show pair action with a subset of terms (4-6 terms)
-          final pairTerms = _terms.length > 6
-              ? (_terms.toList()..shuffle(_random)).take(6).toList()
-              : _terms;
-          return Scaffold(
-            appBar: appBar,
-            body: PairAction(
-              topic: widget.topic,
-              terms: pairTerms,
-              onNext: _nextStep,
-            ),
-          );
-        }
-
         // Completed view when terms finished
         if (_currentStep >= _totalSteps) {
           return Scaffold(
@@ -156,32 +134,84 @@ class _LearningPageState extends State<LearningPage> {
         }
 
         final term = currentTerm!;
-        final stepMod = _currentStep % 3;
+        final stepMod = _currentStep % 5;
         final hasQuestions =
             term.questions != null && term.questions!.isNotEmpty;
         Widget body;
         if (stepMod == 0) {
-          body = MeetAction(topic: widget.topic, term: term, onNext: _nextStep);
+          // Meet action
+          body = DisplayAction(
+            topic: widget.topic,
+            term: term,
+            onNext: _nextStep,
+            mode: DisplayMode.meet,
+          );
         } else if (stepMod == 1) {
+          // Memory action - use current term and 2 distractors
+          final memoryTerms = <Term>[term];
+          while (memoryTerms.length < 3) {
+            final distractor = _getDistractorTerm(_currentStep ~/ 5);
+            if (!memoryTerms.contains(distractor)) {
+              memoryTerms.add(distractor);
+            } else {
+              // If distractor is same, get another one
+              int candidate = _random.nextInt(_terms.length);
+              while (memoryTerms.contains(_terms[candidate])) {
+                candidate = _random.nextInt(_terms.length);
+              }
+              memoryTerms.add(_terms[candidate]);
+            }
+          }
+          final allMemoryTypes = MemoryActionType.values;
+          final randomIndex = _random.nextInt(allMemoryTypes.length);
+          body = MemoryAction(
+            topic: widget.topic,
+            terms: memoryTerms,
+            onNext: _nextStep,
+            type: allMemoryTypes[randomIndex],
+          );
+        } else if (stepMod == 2) {
+          // Pair action - use current term and 2 distractors
+          final pairTerms = <Term>[term];
+          while (pairTerms.length < 3) {
+            final distractor = _getDistractorTerm(_currentStep ~/ 5);
+            if (!pairTerms.contains(distractor)) {
+              pairTerms.add(distractor);
+            } else {
+              // If distractor is same, get another one
+              int candidate = _random.nextInt(_terms.length);
+              while (pairTerms.contains(_terms[candidate])) {
+                candidate = _random.nextInt(_terms.length);
+              }
+              pairTerms.add(_terms[candidate]);
+            }
+          }
+          final allPairTypes = PairActionType.values;
+          final randomIndex = _random.nextInt(allPairTypes.length);
+          body = PairAction(
+            topic: widget.topic,
+            terms: pairTerms,
+            onNext: _nextStep,
+            type: allPairTypes[randomIndex],
+          );
+        } else if (stepMod == 3) {
+          // Select action
           final allSelectTypes = SelectActionType.values;
           final selectTypes = hasQuestions
               ? allSelectTypes
               : allSelectTypes
-                    .where(
-                      (t) =>
-                          t != SelectActionType.questionToTarget &&
-                          t != SelectActionType.questionToAudio,
-                    )
+                    .where((t) => t != SelectActionType.questionToTarget)
                     .toList();
           final randomIndex = _random.nextInt(selectTypes.length);
           body = SelectAction(
             topic: widget.topic,
             term: term,
-            distractorTerm: _getDistractorTerm(_currentStep ~/ 3),
+            distractorTerm: _getDistractorTerm(_currentStep ~/ 5),
             onNext: _nextStep,
             type: selectTypes[randomIndex],
           );
         } else {
+          // Merge action
           final allMergeTypes = MergeActionType.values;
           final mergeTypes = hasQuestions
               ? allMergeTypes

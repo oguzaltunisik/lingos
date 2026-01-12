@@ -1,13 +1,14 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
-import 'package:lingos/widgets/action_button.dart';
+import 'package:lingos/services/sound_service.dart';
 import 'package:lingos/widgets/visual_card.dart';
 import 'package:lingos/widgets/target_card.dart';
 import 'package:lingos/widgets/audio_card.dart';
+import 'package:lingos/constants/durations.dart' as AppDurations;
 
 enum PairActionType { visualToTarget, audioToTarget, audioToVisual }
 
@@ -17,11 +18,13 @@ class PairAction extends StatefulWidget {
     required this.topic,
     required this.terms,
     required this.onNext,
+    required this.type,
   });
 
   final Topic topic;
   final List<Term> terms;
   final VoidCallback onNext;
+  final PairActionType type;
 
   @override
   State<PairAction> createState() => _PairActionState();
@@ -29,31 +32,19 @@ class PairAction extends StatefulWidget {
 
 class _PairActionState extends State<PairAction> {
   int? _selectedLeftIndex;
-  int? _selectedRightIndex;
-  Map<int, int> _pairs = {}; // left index -> right display index
-  Map<int, int> _rightDisplayToOriginal =
-      {}; // right display index -> original index
-  bool _showFeedback = false;
   String? _targetLanguageCode;
-  List<int> _rightIndices = [];
-  late PairActionType _type;
-  final Random _random = Random();
+  final List<int> _matchedPairs = [];
+  final List<int> _rightIndices = [];
+  final Map<int, bool> _showFeedback =
+      {}; // Track which pairs show green feedback
+  final Map<int, bool> _showWrongFeedback =
+      {}; // Track which pairs show red feedback
 
   @override
   void initState() {
     super.initState();
-    // Randomly select pair action type
-    _type =
-        PairActionType.values[_random.nextInt(PairActionType.values.length)];
-    // Create shuffled right side indices once
-    if (widget.terms.isNotEmpty) {
-      _rightIndices = List.generate(widget.terms.length, (i) => i)
-        ..shuffle(_random);
-      _rightDisplayToOriginal = {
-        for (int i = 0; i < _rightIndices.length; i++) i: _rightIndices[i],
-      };
-    }
     _loadLanguage();
+    _shuffleRight();
   }
 
   Future<void> _loadLanguage() async {
@@ -64,149 +55,201 @@ class _PairActionState extends State<PairAction> {
     });
   }
 
-  bool _onLeftCardTap(int index) {
-    if (_showFeedback) return false;
-    if (_pairs.containsKey(index)) return false; // Already paired
-
-    bool wasSelected = _selectedLeftIndex == index;
+  void _shuffleRight() {
+    final random = Random();
+    final indices = List.generate(3, (i) => i);
+    indices.shuffle(random);
     setState(() {
-      if (wasSelected) {
+      _rightIndices.clear();
+      _rightIndices.addAll(indices);
+    });
+  }
+
+  void _handleLeftTap(int index) {
+    if (_matchedPairs.contains(index)) return; // Already matched
+
+    setState(() {
+      // Select the card (don't deselect if already selected)
+      _selectedLeftIndex = index;
+    });
+  }
+
+  void _handleRightTap(int rightIndex) {
+    if (_selectedLeftIndex == null) return; // No left card selected
+    if (_matchedPairs.contains(_selectedLeftIndex)) return; // Already matched
+
+    final leftIndex = _selectedLeftIndex!;
+    final originalRightIndex = _rightIndices[rightIndex];
+
+    // Check if it's a correct match
+    final isCorrect = leftIndex == originalRightIndex;
+
+    if (isCorrect) {
+      // Correct match - play sound, show green, then hide
+      SoundService.playCorrect();
+      setState(() {
+        _showFeedback[leftIndex] = true;
         _selectedLeftIndex = null;
-      } else {
-        _selectedLeftIndex = index;
-        if (_selectedRightIndex != null) {
-          // Create pair: left index -> right display index
-          _pairs[index] = _selectedRightIndex!;
-          _selectedLeftIndex = null;
-          _selectedRightIndex = null;
+      });
+
+      // After feedback, hide the matched pair
+      Future.delayed(AppDurations.Durations.feedbackDisplay, () {
+        if (!mounted) return;
+        setState(() {
+          _matchedPairs.add(leftIndex);
+          _showFeedback.remove(leftIndex);
+        });
+
+        // Check if all pairs are matched
+        if (_matchedPairs.length == 3) {
+          Future.delayed(AppDurations.Durations.fadeOutDelay, () {
+            if (!mounted) return;
+            widget.onNext();
+          });
         }
-      }
-    });
-    return !wasSelected; // Return true if selected, false if deselected
-  }
+      });
+    } else {
+      // Wrong match - play sound, show red only on the two selected cards (left and right that was tapped)
+      SoundService.playIncorrect();
+      setState(() {
+        _showWrongFeedback[leftIndex] = true;
+        // Use rightIndex to track which right card was tapped, not originalRightIndex
+        _showWrongFeedback[rightIndex + 10] =
+            true; // Add offset to avoid conflict with left indices
+      });
 
-  void _onRightCardTap(int displayIndex) {
-    if (_showFeedback) return;
-    if (_pairs.values.contains(displayIndex)) return; // Already paired
-
-    // Can only select right if left is already selected
-    if (_selectedLeftIndex == null) return;
-
-    setState(() {
-      if (_selectedRightIndex == displayIndex) {
-        _selectedRightIndex = null;
-      } else {
-        _selectedRightIndex = displayIndex;
-        // Create pair: left index -> right display index
-        _pairs[_selectedLeftIndex!] = displayIndex;
-        _selectedLeftIndex = null;
-        _selectedRightIndex = null;
-      }
-    });
-  }
-
-  bool get _allPaired {
-    return _pairs.length == widget.terms.length;
-  }
-
-  void _checkPairs() {
-    setState(() {
-      _showFeedback = true;
-    });
-  }
-
-  void _handleNext() {
-    widget.onNext();
-  }
-
-  Color? _getLeftCardColor(int leftIndex) {
-    if (!_showFeedback) {
-      return _selectedLeftIndex == leftIndex
-          ? Theme.of(context).colorScheme.primary
-          : null;
+      // Clear red feedback after delay, but keep left card selected
+      Future.delayed(AppDurations.Durations.feedbackDisplay, () {
+        if (!mounted) return;
+        setState(() {
+          _showWrongFeedback.remove(leftIndex);
+          _showWrongFeedback.remove(rightIndex + 10);
+        });
+      });
     }
-    // Show feedback: green if correct pair, red if wrong
-    final rightDisplayIndex = _pairs[leftIndex];
-    if (rightDisplayIndex == null) return null;
-    final originalIndex = _rightDisplayToOriginal[rightDisplayIndex];
-    if (originalIndex == null) return null;
-    return leftIndex == originalIndex ? Colors.green : Colors.red;
   }
 
-  Color? _getRightCardColor(int displayIndex) {
-    if (!_showFeedback) {
-      return _selectedRightIndex == displayIndex
-          ? Theme.of(context).colorScheme.primary
-          : null;
+  Widget _buildLeftCard(int index) {
+    final isSelected = _selectedLeftIndex == index;
+    final isMatched = _matchedPairs.contains(index);
+    final showGreen = _showFeedback[index] == true;
+    final showRed = _showWrongFeedback[index] == true;
+
+    if (isMatched) {
+      return Opacity(
+        opacity: 0,
+        child: IgnorePointer(child: _buildLeftCardContent(index)),
+      );
     }
-    // Show feedback: green if correct pair, red if wrong
-    final leftIndex = _pairs.entries
-        .firstWhere(
-          (e) => e.value == displayIndex,
-          orElse: () => const MapEntry(-1, -1),
-        )
-        .key;
-    if (leftIndex == -1) return null;
-    final originalIndex = _rightDisplayToOriginal[displayIndex];
-    if (originalIndex == null) return null;
-    return leftIndex == originalIndex ? Colors.green : Colors.red;
+
+    Color? overrideColor;
+    if (showRed) {
+      overrideColor = Colors.red;
+    } else if (showGreen) {
+      overrideColor = Colors.green;
+    } else if (isSelected) {
+      final scheme = Theme.of(context).colorScheme;
+      overrideColor = scheme.primary.withValues(alpha: 0.3);
+    }
+
+    // For audio types, AudioCard handles its own tap, so don't wrap in GestureDetector
+    final isAudioType =
+        widget.type == PairActionType.audioToTarget ||
+        widget.type == PairActionType.audioToVisual;
+
+    if (isAudioType) {
+      return _buildLeftCardContent(index, overrideColor: overrideColor);
+    }
+
+    return GestureDetector(
+      onTap: () => _handleLeftTap(index),
+      child: _buildLeftCardContent(index, overrideColor: overrideColor),
+    );
   }
 
-  Widget _buildLeftCard(Term term, int index) {
-    final isSelected = _selectedLeftIndex == index || _pairs.containsKey(index);
-    final overrideColor = _getLeftCardColor(index);
+  Widget _buildLeftCardContent(int index, {Color? overrideColor}) {
+    final term = widget.terms[index];
+    final topic = widget.topic;
 
-    switch (_type) {
+    switch (widget.type) {
       case PairActionType.visualToTarget:
         return VisualCard(
           term: term,
-          topic: widget.topic,
-          isSelected: isSelected,
-          onTap: () => _onLeftCardTap(index),
+          topic: topic,
           overrideColor: overrideColor,
           showIcon: false,
+          showBorder: true,
         );
       case PairActionType.audioToTarget:
       case PairActionType.audioToVisual:
         return AudioCard(
-          topic: widget.topic,
+          topic: topic,
           term: term,
-          isSelected: isSelected,
-          onSelected: () => _onLeftCardTap(index),
           overrideColor: overrideColor,
+          showBorder: true,
+          onSelected: () {
+            // Handle selection and play TTS
+            _handleLeftTap(index);
+            return true; // Play TTS
+          },
         );
     }
   }
 
-  Widget _buildRightCard(
-    Term term,
-    int displayIndex,
-    bool isPaired,
-    String targetLanguageCode,
-  ) {
-    final isSelected = _selectedRightIndex == displayIndex || isPaired;
-    final overrideColor = _getRightCardColor(displayIndex);
+  Widget _buildRightCard(int rightIndex) {
+    final originalIndex = _rightIndices[rightIndex];
+    final isMatched = _matchedPairs.contains(originalIndex);
+    final showGreen = _showFeedback[originalIndex] == true;
+    final showRed =
+        _showWrongFeedback[rightIndex + 10] ==
+        true; // Use rightIndex with offset
 
-    switch (_type) {
+    if (isMatched) {
+      return Opacity(
+        opacity: 0,
+        child: IgnorePointer(child: _buildRightCardContent(originalIndex)),
+      );
+    }
+
+    Color? overrideColor;
+    if (showRed) {
+      overrideColor = Colors.red;
+    } else if (showGreen) {
+      overrideColor = Colors.green;
+    }
+
+    return GestureDetector(
+      onTap: () => _handleRightTap(rightIndex),
+      child: _buildRightCardContent(
+        originalIndex,
+        overrideColor: overrideColor,
+      ),
+    );
+  }
+
+  Widget _buildRightCardContent(int index, {Color? overrideColor}) {
+    final term = widget.terms[index];
+    final topic = widget.topic;
+    final targetLang = _targetLanguageCode ?? 'en';
+
+    switch (widget.type) {
       case PairActionType.visualToTarget:
       case PairActionType.audioToTarget:
         return TargetCard(
-          topic: widget.topic,
-          targetText: term.getText(targetLanguageCode),
-          languageCode: targetLanguageCode,
-          isSelected: isSelected,
-          onTap: () => _onRightCardTap(displayIndex),
+          topic: topic,
+          targetText: term.getText(targetLang),
+          languageCode: targetLang,
           overrideColor: overrideColor,
           showIcon: false,
+          showBorder: true,
         );
       case PairActionType.audioToVisual:
         return VisualCard(
           term: term,
-          topic: widget.topic,
-          isSelected: isSelected,
-          onTap: () => _onRightCardTap(displayIndex),
+          topic: topic,
           overrideColor: overrideColor,
           showIcon: false,
+          showBorder: true,
         );
     }
   }
@@ -215,15 +258,12 @@ class _PairActionState extends State<PairAction> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.current;
     final scheme = Theme.of(context).colorScheme;
-    final targetLanguageCode = _targetLanguageCode;
 
-    if (targetLanguageCode == null) {
-      return const Center(child: CircularProgressIndicator());
+    if (widget.terms.length < 3) {
+      return const SizedBox.shrink();
     }
 
-    if (widget.terms.isEmpty || _rightIndices.isEmpty) {
-      return const Center(child: Text('No terms available'));
-    }
+    final title = loc.actionPair;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -231,7 +271,7 @@ class _PairActionState extends State<PairAction> {
         spacing: 16,
         children: [
           Text(
-            loc.actionPair,
+            title,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -242,49 +282,26 @@ class _PairActionState extends State<PairAction> {
             child: Row(
               spacing: 16,
               children: [
-                // Left side cards
+                // Left column
                 Expanded(
                   child: Column(
                     spacing: 12,
-                    children: widget.terms.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final term = entry.value;
-                      return Expanded(child: _buildLeftCard(term, index));
-                    }).toList(),
+                    children: List.generate(3, (i) {
+                      return Expanded(child: _buildLeftCard(i));
+                    }),
                   ),
                 ),
-                // Right side cards (shuffled)
+                // Right column
                 Expanded(
                   child: Column(
                     spacing: 12,
-                    children: _rightIndices.asMap().entries.map((entry) {
-                      final displayIndex = entry.key;
-                      final originalIndex = entry.value;
-                      if (originalIndex < 0 ||
-                          originalIndex >= widget.terms.length) {
-                        return const SizedBox.shrink();
-                      }
-                      final term = widget.terms[originalIndex];
-                      final isPaired = _pairs.values.contains(displayIndex);
-                      return Expanded(
-                        child: _buildRightCard(
-                          term,
-                          displayIndex,
-                          isPaired,
-                          targetLanguageCode,
-                        ),
-                      );
-                    }).toList(),
+                    children: List.generate(3, (i) {
+                      return Expanded(child: _buildRightCard(i));
+                    }),
                   ),
                 ),
               ],
             ),
-          ),
-          ActionButton(
-            label: _showFeedback ? loc.nextButton : loc.checkButton,
-            onPressed: _showFeedback
-                ? _handleNext
-                : (_allPaired ? _checkPairs : null),
           ),
         ],
       ),

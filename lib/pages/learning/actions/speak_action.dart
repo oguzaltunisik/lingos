@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
@@ -7,19 +5,20 @@ import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/tts_service.dart';
 import 'package:lingos/services/sound_service.dart';
+import 'package:lingos/services/stt_service.dart';
 import 'package:lingos/pages/learning/actions/display_action.dart';
 import 'package:lingos/widgets/visual_card.dart';
 import 'package:lingos/widgets/audio_card.dart';
-import 'package:lingos/widgets/merge_card.dart';
 import 'package:lingos/widgets/target_card.dart';
 import 'package:lingos/widgets/question_card.dart';
+import 'package:lingos/widgets/speak_card.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
 import 'package:lingos/utils/action_helpers.dart';
 
-enum MergeActionType { audioToTarget, visualToTarget, questionToTarget }
+enum SpeakActionType { audioToTarget, visualToTarget, questionToTarget }
 
-class MergeAction extends StatefulWidget {
-  const MergeAction({
+class SpeakAction extends StatefulWidget {
+  const SpeakAction({
     super.key,
     required this.topic,
     required this.term,
@@ -30,35 +29,65 @@ class MergeAction extends StatefulWidget {
   final Topic topic;
   final Term term;
   final VoidCallback onNext;
-  final MergeActionType type;
+  final SpeakActionType type;
 
   @override
-  State<MergeAction> createState() => _MergeActionState();
+  State<SpeakAction> createState() => _SpeakActionState();
 }
 
-class _MergeActionState extends State<MergeAction> {
+class _SpeakActionState extends State<SpeakAction> {
   bool _hasAnswered = false;
   bool _showFeedback = false;
   bool _isResultCorrect = false;
   bool _showTopCard = false;
   bool _showBottomCard = false;
-  final Random _rng = Random();
   int _flowId = 0;
   String? _targetLanguageCode;
   String? _nativeLanguageCode;
-  List<String> _chunks = const [];
-  List<int> _shuffledIndices = const [];
-  final List<int> _selectedOrder = [];
+  String _spokenText = '';
   String? _cachedQuestion;
+  bool _isRecording = false;
 
   @override
   void initState() {
     super.initState();
+    _initializeAndCheckPermission();
     _loadAndStart();
   }
 
+  Future<void> _initializeAndCheckPermission() async {
+    await SttService.initialize();
+    final hasPermission = await SttService.hasPermission();
+    if (!hasPermission && mounted) {
+      await SttService.requestPermission();
+      final hasPermAfterRequest = await SttService.hasPermission();
+      if (!hasPermAfterRequest && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'Microphone permission is required. Please grant permission in app settings.',
+            ),
+            backgroundColor: Colors.orange,
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'OK',
+              textColor: Colors.white,
+              onPressed: () {},
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   @override
-  void didUpdateWidget(covariant MergeAction oldWidget) {
+  void dispose() {
+    SttService.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant SpeakAction oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.term.id != widget.term.id || oldWidget.type != widget.type) {
       _loadAndStart();
@@ -71,24 +100,24 @@ class _MergeActionState extends State<MergeAction> {
     final target = await LanguageService.getTargetLanguage();
     final native = await LanguageService.getNativeLanguage();
     if (!mounted || currentFlow != _flowId) return;
+
     // Cache question once if needed
     String? cachedQuestion;
-    if (widget.type == MergeActionType.questionToTarget) {
+    if (widget.type == SpeakActionType.questionToTarget) {
       cachedQuestion = widget.term.getQuestion(native ?? 'en');
     }
 
     setState(() {
       _targetLanguageCode = target;
       _nativeLanguageCode = native;
-      _chunks = _buildChunksWithDistractors();
-      _shuffledIndices = _buildShuffledIndices(_chunks.length);
-      _selectedOrder.clear();
+      _spokenText = '';
       _hasAnswered = false;
       _showFeedback = false;
       _isResultCorrect = false;
       _cachedQuestion = cachedQuestion;
       _showTopCard = false;
       _showBottomCard = false;
+      _isRecording = false;
     });
 
     if (_targetLanguageCode == null && _nativeLanguageCode == null) return;
@@ -104,17 +133,16 @@ class _MergeActionState extends State<MergeAction> {
 
     // Wait after top card appears - adjust based on question length if it's a question type, or 1s for visual card
     Duration waitDuration = AppDurations.Durations.ttsDelay;
-    if (widget.type == MergeActionType.questionToTarget) {
+    if (widget.type == SpeakActionType.questionToTarget) {
       waitDuration = ActionHelpers.calculateTextWaitDuration(cachedQuestion);
-    } else if (widget.type == MergeActionType.visualToTarget) {
-      // Wait 1 second for visual card to be perceived
+    } else if (widget.type == SpeakActionType.visualToTarget) {
       waitDuration = AppDurations.Durations.visualComprehensionDelay;
     }
     await Future.delayed(waitDuration);
     if (!mounted || currentFlow != _flowId) return;
 
     // Play TTS if needed (for audioToTarget)
-    if (widget.type == MergeActionType.audioToTarget) {
+    if (widget.type == SpeakActionType.audioToTarget) {
       final text = widget.term.getText(_targetLanguageCode ?? 'en');
       if (text.isNotEmpty) {
         await TtsService.speakTerm(
@@ -134,123 +162,163 @@ class _MergeActionState extends State<MergeAction> {
     });
   }
 
-  List<String> _buildChunksWithDistractors() {
-    final baseChunks = MergeCard.buildChunks(
-      widget.term.getText(_targetLanguageCode ?? 'en'),
-    );
-    if (baseChunks.isEmpty) return baseChunks;
-
-    final wrongChunks = <String>[];
-    final int needed = baseChunks.length >= 3
-        ? 2
-        : baseChunks.length == 2
-        ? 1
-        : 0;
-
-    String generateWrong(int length) {
-      const letters = 'abcdefghijklmnopqrstuvwxyz';
-      return List.generate(
-        length,
-        (_) => letters[_rng.nextInt(letters.length)],
-      ).join();
-    }
-
-    while (wrongChunks.length < needed) {
-      final ref = baseChunks[wrongChunks.length % baseChunks.length];
-      final candidate = generateWrong(ref.length.clamp(1, 6));
-      if (!baseChunks.contains(candidate) && !wrongChunks.contains(candidate)) {
-        wrongChunks.add(candidate);
-      }
-    }
-
-    return [...baseChunks, ...wrongChunks];
-  }
-
-  List<int> _buildShuffledIndices(int count) {
-    final indices = List<int>.generate(count, (i) => i);
-    if (indices.length <= 1) return indices;
-    // Ensure not returning the original order to keep it visibly shuffled.
-    for (int attempt = 0; attempt < 5; attempt++) {
-      indices.shuffle(_rng);
-      final isSameOrder = List.generate(
-        indices.length,
-        (i) => i,
-      ).every((i) => indices[i] == i);
-      if (!isSameOrder) break;
-    }
-    return indices;
-  }
-
   String get _targetText {
     if (_targetLanguageCode == null) return widget.term.textEn;
     return widget.term.getText(_targetLanguageCode!);
   }
 
-  String get _builtText {
-    return _selectedOrder.map((i) => _chunks[i]).join();
+  String _getLocaleId(String languageCode) {
+    switch (languageCode) {
+      case 'tr':
+        return 'tr_TR';
+      case 'fi':
+        return 'fi_FI';
+      case 'en':
+      default:
+        return 'en_US';
+    }
   }
 
-  List<int> get _correctChunkIndices {
-    // The first baseChunks.length indices in _chunks are the correct chunks in order
-    final baseChunks = MergeCard.buildChunks(_targetText);
-    return List<int>.generate(baseChunks.length, (i) => i);
-  }
+  Future<void> _startRecording() async {
+    if (_isRecording || _targetLanguageCode == null) return;
 
-  void _toggleLetter(int idx) {
-    if (_showFeedback) return; // Don't allow during feedback
+    // Stop any existing listening first
+    if (SttService.isListening) {
+      await SttService.cancel();
+      await Future.delayed(const Duration(milliseconds: 200));
+    }
 
-    final currentFlow = ++_flowId;
-    final wasSelected = _selectedOrder.contains(idx);
-
-    if (wasSelected) {
-      // Deselect - just remove it
-      setState(() {
-        _selectedOrder.remove(idx);
-      });
+    // Check permission one more time before starting
+    final hasPermission = await SttService.hasPermission();
+    if (!hasPermission) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Microphone permission is required. Please grant permission in app settings.',
+          ),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 4),
+          action: SnackBarAction(
+            label: 'OK',
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
+        ),
+      );
       return;
     }
 
-    // Select - first add the chunk, then check if it's correct
+    try {
+      setState(() {
+        _isRecording = true;
+      });
+
+      final localeId = _getLocaleId(_targetLanguageCode!);
+      await SttService.startListening(
+        onResult: (text) {
+          if (!mounted) return;
+          setState(() {
+            _spokenText = text.trim();
+          });
+        },
+        onFinalResult: (text) {
+          if (!mounted) return;
+          setState(() {
+            _spokenText = text.trim();
+          });
+          // Automatically check when final result is received
+        },
+        localeId: localeId,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isRecording = false;
+      });
+      // Show error to user
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'OK',
+              textColor: Colors.white,
+              onPressed: () {},
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _stopRecording() async {
+    if (!_isRecording) return;
+
+    await SttService.stopListening();
+
+    // Wait a bit for final result to be processed
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    if (!mounted) return;
+
     setState(() {
-      _selectedOrder.add(idx);
+      _isRecording = false;
     });
 
-    // Check if it's correct
-    final correctChunkIndices = _correctChunkIndices;
-    final expectedIndex =
-        (_selectedOrder.length - 1) < correctChunkIndices.length
-        ? correctChunkIndices[_selectedOrder.length - 1]
-        : null;
-    final isCorrect = expectedIndex != null && idx == expectedIndex;
+    // Check the spoken text
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
+    _checkSpokenText();
+  }
+
+  void _checkSpokenText() {
+    if (_spokenText.isEmpty) return;
+
+    // Check if the spoken text matches the target text (case-insensitive, ignore punctuation)
+    final targetNormalized = _targetText
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^\w\s]'), '')
+        .trim();
+    final spokenNormalized = _spokenText
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^\w\s]'), '')
+        .trim();
+
+    final isCorrect = targetNormalized == spokenNormalized;
 
     if (isCorrect) {
-      // Check if all chunks are complete
-      if (_selectedOrder.length == correctChunkIndices.length) {
-        // All correct - play sound, show green and proceed to remember
-        SoundService.playCorrect();
+      // Correct: play sound, show green and proceed to remember
+      SoundService.playCorrect();
+      setState(() {
+        _isResultCorrect = true;
+        _showFeedback = true;
+      });
+      Future.delayed(AppDurations.Durations.feedbackDisplay, () {
+        if (!mounted) return;
         setState(() {
-          _isResultCorrect = true;
-          _showFeedback = true;
+          _hasAnswered = true;
         });
-        Future.delayed(AppDurations.Durations.feedbackDisplay, () {
-          if (!mounted || currentFlow != _flowId) return;
-          setState(() {
-            _hasAnswered = true;
-          });
-        });
-      }
+      });
     } else {
-      // Wrong chunk - play sound, show red, then revert
+      // Wrong: play sound, show red, then reset
       SoundService.playIncorrect();
       setState(() {
         _isResultCorrect = false;
         _showFeedback = true;
       });
       Future.delayed(AppDurations.Durations.wrongChunkFeedback, () {
-        if (!mounted || currentFlow != _flowId) return;
+        if (!mounted) return;
+        // Cancel any ongoing listening
+        if (SttService.isListening) {
+          SttService.cancel();
+        }
         setState(() {
           _showFeedback = false;
-          _selectedOrder.remove(idx); // Remove the wrong chunk
+          _spokenText = '';
+          _isRecording = false;
         });
       });
     }
@@ -262,11 +330,11 @@ class _MergeActionState extends State<MergeAction> {
     final loc = AppLocalizations.current;
     final title = _hasAnswered
         ? loc.actionRemember
-        : (widget.type == MergeActionType.audioToTarget
-              ? loc.actionAudioToTargetMerge
-              : widget.type == MergeActionType.questionToTarget
-              ? loc.actionQuestionToTargetMerge
-              : loc.actionVisualToTargetMerge);
+        : (widget.type == SpeakActionType.audioToTarget
+              ? 'Dinle ve Söyle'
+              : widget.type == SpeakActionType.questionToTarget
+              ? 'Soruya Cevap Ver'
+              : 'Görseli Söyle');
 
     if (_targetText.isEmpty) return const SizedBox.shrink();
 
@@ -302,9 +370,16 @@ class _MergeActionState extends State<MergeAction> {
                   child: AnimatedOpacity(
                     opacity: _showTopCard ? 1.0 : 0.0,
                     duration: AppDurations.Durations.fadeAnimation,
-                    child: widget.type == MergeActionType.audioToTarget
-                        ? AudioCard(topic: topic, term: widget.term)
-                        : widget.type == MergeActionType.questionToTarget
+                    child: widget.type == SpeakActionType.audioToTarget
+                        ? AudioCard(
+                            topic: topic,
+                            term: widget.term,
+                            onSelected: () {
+                              // Always play TTS when audio card is tapped
+                              return true;
+                            },
+                          )
+                        : widget.type == SpeakActionType.questionToTarget
                         ? QuestionCard(
                             topic: topic,
                             term: widget.term,
@@ -323,28 +398,26 @@ class _MergeActionState extends State<MergeAction> {
                         Expanded(
                           child: TargetCard(
                             topic: topic,
-                            targetText: _builtText,
+                            targetText: _spokenText,
                             languageCode: _targetLanguageCode ?? 'en',
                             overrideColor: _showFeedback
                                 ? (_isResultCorrect ? Colors.green : Colors.red)
                                 : null,
-                            showIcon: false,
                             onTap: () {
                               setState(() {
-                                _selectedOrder.clear();
+                                _spokenText = '';
                               });
                             },
                           ),
                         ),
                         Expanded(
-                          child: MergeCard(
+                          child: SpeakCard(
                             topic: topic,
                             term: widget.term,
                             targetLanguageCode: _targetLanguageCode ?? 'en',
-                            chunks: _chunks,
-                            shuffledIndices: _shuffledIndices,
-                            selectedIndices: _selectedOrder,
-                            onToggle: _toggleLetter,
+                            isRecording: _isRecording,
+                            onRecordStart: _startRecording,
+                            onRecordStop: _stopRecording,
                           ),
                         ),
                       ],

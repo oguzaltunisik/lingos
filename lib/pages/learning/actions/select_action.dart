@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
@@ -7,23 +5,22 @@ import 'package:lingos/models/selection_option.dart';
 import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/tts_service.dart';
-import 'package:lingos/pages/learning/actions/remember_action.dart';
-import 'package:lingos/widgets/action_button.dart';
+import 'package:lingos/services/sound_service.dart';
+import 'package:lingos/pages/learning/actions/display_action.dart';
 import 'package:lingos/widgets/visual_card.dart';
 import 'package:lingos/widgets/target_card.dart';
 import 'package:lingos/widgets/options_card.dart';
 import 'package:lingos/widgets/audio_card.dart';
 import 'package:lingos/widgets/question_card.dart';
+import 'package:lingos/constants/durations.dart' as AppDurations;
+import 'package:lingos/utils/action_helpers.dart';
 
 enum SelectActionType {
   audioToTarget,
   audioToVisual,
   visualToTarget,
   targetToVisual,
-  targetToAudio,
-  visualToAudio,
   questionToTarget,
-  questionToAudio,
 }
 
 class SelectAction extends StatefulWidget {
@@ -47,7 +44,6 @@ class SelectAction extends StatefulWidget {
 }
 
 class _SelectActionState extends State<SelectAction> {
-  static const Duration _ttsDelay = Duration(milliseconds: 350);
   bool _hasAnswered = false;
   bool _showFeedback = false;
   bool _isResultCorrect = false;
@@ -114,8 +110,7 @@ class _SelectActionState extends State<SelectAction> {
 
     // Cache question once if needed
     String? cachedQuestion;
-    if (widget.type == SelectActionType.questionToTarget ||
-        widget.type == SelectActionType.questionToAudio) {
+    if (widget.type == SelectActionType.questionToTarget) {
       final lang = _nativeLanguageCode ?? 'en';
       cachedQuestion = widget.term.getQuestion(lang);
     }
@@ -132,7 +127,7 @@ class _SelectActionState extends State<SelectAction> {
     });
 
     // Wait after screen opens
-    await Future.delayed(_ttsDelay);
+    await Future.delayed(AppDurations.Durations.ttsDelay);
     if (!mounted || currentFlow != _flowId) return;
 
     // Show top card with fade
@@ -141,29 +136,18 @@ class _SelectActionState extends State<SelectAction> {
     });
 
     // Wait after top card appears - adjust based on question length if it's a question type, or 1s for visual card, or target length for targetTo types
-    Duration waitDuration = _ttsDelay;
-    if (widget.type == SelectActionType.questionToTarget ||
-        widget.type == SelectActionType.questionToAudio) {
-      final questionLength = cachedQuestion?.length ?? 0;
-      // Base delay + additional time based on question length (roughly 50ms per character, min 350ms)
-      waitDuration = Duration(
-        milliseconds: (350 + (questionLength * 50)).clamp(350, 2000),
-      );
+    Duration waitDuration = AppDurations.Durations.ttsDelay;
+    if (widget.type == SelectActionType.questionToTarget) {
+      waitDuration = ActionHelpers.calculateTextWaitDuration(cachedQuestion);
     } else if (widget.type == SelectActionType.visualToTarget ||
-        widget.type == SelectActionType.visualToAudio ||
         widget.type == SelectActionType.audioToVisual) {
       // Wait 1 second for visual card to be perceived
-      waitDuration = const Duration(seconds: 1);
-    } else if (widget.type == SelectActionType.targetToVisual ||
-        widget.type == SelectActionType.targetToAudio) {
-      // Wait based on target text length for reading (roughly 50ms per character, min 350ms)
+      waitDuration = AppDurations.Durations.visualComprehensionDelay;
+    } else if (widget.type == SelectActionType.targetToVisual) {
       final targetText = _targetLanguageCode != null
           ? widget.term.getText(_targetLanguageCode!)
           : widget.term.textEn;
-      final targetLength = targetText.length;
-      waitDuration = Duration(
-        milliseconds: (350 + (targetLength * 50)).clamp(350, 2000),
-      );
+      waitDuration = ActionHelpers.calculateTextWaitDuration(targetText);
     }
     await Future.delayed(waitDuration);
     if (!mounted || currentFlow != _flowId) return;
@@ -183,7 +167,7 @@ class _SelectActionState extends State<SelectAction> {
     }
 
     // Wait after TTS
-    await Future.delayed(_ttsDelay);
+    await Future.delayed(AppDurations.Durations.ttsDelay);
     if (!mounted || currentFlow != _flowId) return;
 
     // Show bottom card with fade
@@ -199,6 +183,42 @@ class _SelectActionState extends State<SelectAction> {
     return term.textEn;
   }
 
+  void _checkAnswer(int selectedIndex) {
+    if (_showFeedback) return; // Already checking, ignore
+
+    final currentFlow = ++_flowId;
+    final isCorrect = _options[selectedIndex].isCorrect;
+
+    // Show feedback immediately
+    setState(() {
+      _selectedIndex = selectedIndex;
+      _isResultCorrect = isCorrect;
+      _showFeedback = true;
+    });
+
+    if (isCorrect) {
+      // Play correct sound
+      SoundService.playCorrect();
+      // Correct: show green, then proceed to remember action
+      Future.delayed(AppDurations.Durations.feedbackDisplay, () {
+        if (!mounted || currentFlow != _flowId) return;
+        setState(() {
+          _hasAnswered = true;
+        });
+      });
+    } else {
+      // Incorrect: play sound, show red, then reset for retry
+      SoundService.playIncorrect();
+      Future.delayed(AppDurations.Durations.feedbackDisplay, () {
+        if (!mounted || currentFlow != _flowId) return;
+        setState(() {
+          _showFeedback = false;
+          _selectedIndex = null;
+        });
+      });
+    }
+  }
+
   String _title(AppLocalizations loc) {
     switch (widget.type) {
       case SelectActionType.audioToTarget:
@@ -209,14 +229,8 @@ class _SelectActionState extends State<SelectAction> {
         return loc.actionVisualToTarget;
       case SelectActionType.targetToVisual:
         return loc.actionTargetToVisual;
-      case SelectActionType.targetToAudio:
-        return loc.actionTargetToAudio;
-      case SelectActionType.visualToAudio:
-        return loc.actionVisualToAudio;
       case SelectActionType.questionToTarget:
         return loc.actionQuestionToTarget;
-      case SelectActionType.questionToAudio:
-        return loc.actionQuestionToAudio;
     }
   }
 
@@ -226,123 +240,55 @@ class _SelectActionState extends State<SelectAction> {
     switch (widget.type) {
       case SelectActionType.audioToTarget:
       case SelectActionType.audioToVisual:
-        return AudioCard(topic: topic, term: widget.term, isSelected: false);
+        return AudioCard(
+          topic: topic,
+          term: widget.term,
+          onSelected: () {
+            // Always play TTS when top card is tapped
+            return true;
+          },
+        );
       case SelectActionType.visualToTarget:
-      case SelectActionType.visualToAudio:
         return VisualCard(term: widget.term, topic: topic);
       case SelectActionType.targetToVisual:
-      case SelectActionType.targetToAudio:
-      case SelectActionType.questionToTarget:
-      case SelectActionType.questionToAudio:
-        if (widget.type == SelectActionType.questionToTarget ||
-            widget.type == SelectActionType.questionToAudio) {
-          return QuestionCard(
-            topic: topic,
-            term: widget.term,
-            questionText: _cachedQuestion,
-          );
-        }
         return TargetCard(
           topic: topic,
           targetText: widget.term.getText(targetLang),
           languageCode: targetLang,
+        );
+      case SelectActionType.questionToTarget:
+        return QuestionCard(
+          topic: topic,
+          term: widget.term,
+          questionText: _cachedQuestion,
         );
     }
   }
 
   Widget _buildOptions(AppLocalizations loc, Color? feedbackColor) {
     final topic = widget.topic;
-    switch (widget.type) {
-      case SelectActionType.audioToTarget:
-      case SelectActionType.questionToTarget:
-        return OptionsCard(
-          topic: topic,
-          isVisual: false,
-          options: _options,
-          selectedIndex: _selectedIndex,
-          highlightedIndex: _selectedIndex,
-          highlightColor: feedbackColor,
-          showFeedback: _showFeedback,
-          onSelect: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        );
-      case SelectActionType.visualToTarget:
-        return OptionsCard(
-          topic: topic,
-          isVisual: false,
-          options: _options,
-          selectedIndex: _selectedIndex,
-          highlightedIndex: _selectedIndex,
-          highlightColor: feedbackColor,
-          showFeedback: _showFeedback,
-          onSelect: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        );
-      case SelectActionType.targetToVisual:
-      case SelectActionType.audioToVisual:
-        return OptionsCard(
-          topic: topic,
-          isVisual: true,
-          options: _options,
-          selectedIndex: _selectedIndex,
-          highlightedIndex: _selectedIndex,
-          highlightColor: feedbackColor,
-          showFeedback: _showFeedback,
-          onSelect: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        );
-      case SelectActionType.visualToAudio:
-      case SelectActionType.targetToAudio:
-      case SelectActionType.questionToAudio:
-        return Column(
-          spacing: 12,
-          children: [
-            Expanded(
-              child: AudioCard(
-                topic: topic,
-                term: _options[0].term ?? widget.term,
-                isSelected: _selectedIndex == 0,
-                overrideColor: _showFeedback && _selectedIndex == 0
-                    ? feedbackColor
-                    : null,
-                onSelected: () {
-                  final wasSelected = _selectedIndex == 0;
-                  setState(() {
-                    _selectedIndex = wasSelected ? -1 : 0;
-                  });
-                  return !wasSelected; // Return true if selected, false if deselected
-                },
-              ),
-            ),
-            Expanded(
-              child: AudioCard(
-                topic: topic,
-                term: _options[1].term ?? widget.term,
-                isSelected: _selectedIndex == 1,
-                overrideColor: _showFeedback && _selectedIndex == 1
-                    ? feedbackColor
-                    : null,
-                onSelected: () {
-                  final wasSelected = _selectedIndex == 1;
-                  setState(() {
-                    _selectedIndex = wasSelected ? -1 : 1;
-                  });
-                  return !wasSelected; // Return true if selected, false if deselected
-                },
-              ),
-            ),
-          ],
-        );
-    }
+    final isVisual =
+        widget.type == SelectActionType.targetToVisual ||
+        widget.type == SelectActionType.audioToVisual;
+
+    return OptionsCard(
+      topic: topic,
+      isVisual: isVisual,
+      options: _options,
+      selectedIndex: _selectedIndex,
+      highlightedIndex: _selectedIndex,
+      highlightColor: feedbackColor,
+      showFeedback: _showFeedback,
+      onSelect: _handleOptionSelect,
+    );
+  }
+
+  void _handleOptionSelect(int index) {
+    if (_showFeedback) return; // Don't allow selection during feedback
+    setState(() {
+      _selectedIndex = index;
+    });
+    _checkAnswer(index);
   }
 
   @override
@@ -359,10 +305,11 @@ class _SelectActionState extends State<SelectAction> {
     }
 
     if (_hasAnswered) {
-      return RememberAction(
+      return DisplayAction(
         topic: topic,
         term: widget.term,
         onNext: widget.onNext,
+        mode: DisplayMode.remember,
         titleOverride: actionTitle,
       );
     }
@@ -387,39 +334,19 @@ class _SelectActionState extends State<SelectAction> {
                 Expanded(
                   child: AnimatedOpacity(
                     opacity: _showTopCard ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 300),
+                    duration: AppDurations.Durations.fadeAnimation,
                     child: _buildTopCard(),
                   ),
                 ),
                 Expanded(
                   child: AnimatedOpacity(
                     opacity: _showBottomCard ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 300),
+                    duration: AppDurations.Durations.fadeAnimation,
                     child: _buildOptions(loc, feedbackColor),
                   ),
                 ),
               ],
             ),
-          ),
-          ActionButton(
-            label: loc.checkButton,
-            onPressed: (_selectedIndex == null || _showFeedback)
-                ? null
-                : () {
-                    final currentFlow = ++_flowId;
-                    final isCorrect = _options[_selectedIndex!].isCorrect;
-                    setState(() {
-                      _isResultCorrect = isCorrect;
-                      _showFeedback = true;
-                    });
-                    Future.delayed(const Duration(seconds: 1), () {
-                      if (!mounted || currentFlow != _flowId) return;
-                      setState(() {
-                        _showFeedback = false;
-                        _hasAnswered = true;
-                      });
-                    });
-                  },
           ),
         ],
       ),

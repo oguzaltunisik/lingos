@@ -38,8 +38,7 @@ class OptionsCard extends StatelessWidget {
   }
 
   Widget _buildOption(BuildContext context, SelectionOption item, int index) {
-    final isSelected = selectedIndex == index && !showFeedback;
-    void onTap() => onSelect(index);
+    final VoidCallback? onTap = showFeedback ? null : () => onSelect(index);
     final applyHighlight = showFeedback && highlightedIndex == index;
     final Color? overrideColor = applyHighlight ? highlightColor : null;
 
@@ -47,9 +46,9 @@ class OptionsCard extends StatelessWidget {
       return VisualCard(
         term: item.term!,
         topic: topic,
-        isSelected: isSelected,
         onTap: onTap,
         overrideColor: overrideColor,
+        showBorder: true,
       );
     }
 
@@ -58,14 +57,8 @@ class OptionsCard extends StatelessWidget {
       final scheme = Theme.of(context).colorScheme;
       final primary = scheme.primary;
       final onPrimary = scheme.onPrimary;
-      final bgColor =
-          overrideColor ??
-          (isSelected ? primary.withValues(alpha: 0.08) : Colors.transparent);
-      final textColor = overrideColor != null
-          ? onPrimary
-          : isSelected
-          ? onPrimary
-          : primary;
+      final bgColor = overrideColor ?? Colors.transparent;
+      final textColor = overrideColor != null ? onPrimary : primary;
       return InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -73,6 +66,7 @@ class OptionsCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             color: bgColor,
+            border: Border.all(color: primary.withValues(alpha: 0.3), width: 1),
           ),
           child: Center(
             child: Padding(
@@ -108,9 +102,9 @@ class OptionsCard extends StatelessWidget {
       topic: topic,
       targetText: item.text,
       languageCode: item.languageCode ?? 'en',
-      isSelected: isSelected,
       onTap: onTap,
       overrideColor: overrideColor,
+      showBorder: true,
     );
   }
 }
