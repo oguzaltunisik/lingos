@@ -25,14 +25,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
-  bubble_picker:
-    dependency: "direct main"
-    description:
-      name: bubble_picker
-      sha256: f69f8079f99a3bb231bdf4a0c3433e7c0b2978642b406d52ee30318967c86a88
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.3"
   characters:
     dependency: transitive
     description:

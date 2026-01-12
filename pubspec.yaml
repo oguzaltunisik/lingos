@@ -18,7 +18,6 @@ dependencies:
   flutter_tts: ^4.2.5
   just_audio: ^0.10.5
   speech_to_text: ^7.0.0
-  bubble_picker: ^0.0.3
 
 dev_dependencies:
   flutter_test:

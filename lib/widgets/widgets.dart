@@ -6,4 +6,5 @@ export 'options_card.dart';
 export 'question_card.dart';
 export 'speak_card.dart';
 export 'target_card.dart';
+export 'true_false_card.dart';
 export 'visual_card.dart';

@@ -67,6 +67,7 @@ class AppLocalizations {
   String get actionSelectCorrectOption =>
       _getString('actionSelectCorrectOption');
   String get actionBuildTerm => _getString('actionBuildTerm');
+  String get actionTrueFalse => _getString('actionTrueFalse');
 
   // Topics
   String getTopicName(String topicId) {
@@ -141,6 +142,7 @@ class AppLocalizations {
     'actionMemory': 'Memory',
     'actionSelectCorrectOption': 'Make a selection',
     'actionBuildTerm': 'Build the term',
+    'actionTrueFalse': 'True or False',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -189,6 +191,7 @@ class AppLocalizations {
     'actionMemory': 'Hafıza',
     'actionSelectCorrectOption': 'Seçim Yap',
     'actionBuildTerm': 'Terimi Oluştur',
+    'actionTrueFalse': 'Doğru mu Yanlış mı',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -238,6 +241,7 @@ class AppLocalizations {
     'actionMemory': 'Muisti',
     'actionSelectCorrectOption': 'Tee valinta',
     'actionBuildTerm': 'Rakenna termi',
+    'actionTrueFalse': 'Totta vai Tarua',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',

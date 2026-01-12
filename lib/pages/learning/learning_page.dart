@@ -11,6 +11,7 @@ import 'package:lingos/pages/learning/actions/completed_action.dart';
 import 'package:lingos/pages/learning/actions/memory_action.dart';
 import 'package:lingos/pages/learning/actions/pair_action.dart';
 import 'package:lingos/pages/learning/actions/select_action.dart';
+import 'package:lingos/pages/learning/actions/true_false_action.dart';
 import 'package:lingos/pages/learning/actions/merge_action.dart';
 
 class LearningPage extends StatefulWidget {
@@ -55,7 +56,9 @@ class _LearningPageState extends State<LearningPage> {
     return (_currentStep + 1) / _totalSteps;
   }
 
-  int get _totalSteps => _terms.length * 5; // meet, memory, pair, select, merge
+  int get _totalSteps =>
+      _terms.length *
+      7; // meet, memory, pair, select, true/false, remember, merge
 
   Term _getDistractorTerm(int correctIndex) {
     if (_terms.length < 2) return _terms[correctIndex];
@@ -73,7 +76,7 @@ class _LearningPageState extends State<LearningPage> {
       builder: (context, languageCode, child) {
         final isLoading = _terms.isEmpty;
         final currentTerm = (!isLoading && _currentStep < _totalSteps)
-            ? _terms[_currentStep ~/ 5]
+            ? _terms[_currentStep ~/ 7]
             : null;
         final scheme = Theme.of(context).colorScheme;
 
@@ -134,7 +137,7 @@ class _LearningPageState extends State<LearningPage> {
         }
 
         final term = currentTerm!;
-        final stepMod = _currentStep % 5;
+        final stepMod = _currentStep % 7;
         final hasQuestions =
             term.questions != null && term.questions!.isNotEmpty;
         Widget body;
@@ -150,7 +153,7 @@ class _LearningPageState extends State<LearningPage> {
           // Memory action - use current term and 2 distractors
           final memoryTerms = <Term>[term];
           while (memoryTerms.length < 3) {
-            final distractor = _getDistractorTerm(_currentStep ~/ 5);
+            final distractor = _getDistractorTerm(_currentStep ~/ 7);
             if (!memoryTerms.contains(distractor)) {
               memoryTerms.add(distractor);
             } else {
@@ -174,7 +177,7 @@ class _LearningPageState extends State<LearningPage> {
           // Pair action - use current term and 2 distractors
           final pairTerms = <Term>[term];
           while (pairTerms.length < 3) {
-            final distractor = _getDistractorTerm(_currentStep ~/ 5);
+            final distractor = _getDistractorTerm(_currentStep ~/ 7);
             if (!pairTerms.contains(distractor)) {
               pairTerms.add(distractor);
             } else {
@@ -206,9 +209,28 @@ class _LearningPageState extends State<LearningPage> {
           body = SelectAction(
             topic: widget.topic,
             term: term,
-            distractorTerm: _getDistractorTerm(_currentStep ~/ 5),
+            distractorTerm: _getDistractorTerm(_currentStep ~/ 7),
             onNext: _nextStep,
             type: selectTypes[randomIndex],
+          );
+        } else if (stepMod == 4) {
+          // True/False action
+          final allTrueFalseTypes = TrueFalseActionType.values;
+          final randomIndex = _random.nextInt(allTrueFalseTypes.length);
+          body = TrueFalseAction(
+            topic: widget.topic,
+            term: term,
+            distractorTerm: _getDistractorTerm(_currentStep ~/ 7),
+            onNext: _nextStep,
+            type: allTrueFalseTypes[randomIndex],
+          );
+        } else if (stepMod == 5) {
+          // Remember action - show the term from true/false action
+          body = DisplayAction(
+            topic: widget.topic,
+            term: term,
+            onNext: _nextStep,
+            mode: DisplayMode.remember,
           );
         } else {
           // Merge action
