@@ -6,6 +6,7 @@ class Term {
   final String textEn;
   final String textTr;
   final String textFi;
+  final String textFr;
   final List<Map<String, String>>? questions;
   final String emoji;
   static final Random _random = Random();
@@ -16,6 +17,7 @@ class Term {
     required this.textEn,
     required this.textTr,
     required this.textFi,
+    required this.textFr,
     this.questions,
     required this.emoji,
   });
@@ -26,6 +28,8 @@ class Term {
         return textTr;
       case 'fi':
         return textFi;
+      case 'fr':
+        return textFr;
       case 'en':
         return textEn;
       default:
@@ -41,6 +45,8 @@ class Term {
         return randomQuestion['tr'] ?? '';
       case 'fi':
         return randomQuestion['fi'] ?? '';
+      case 'fr':
+        return randomQuestion['fr'] ?? '';
       case 'en':
         return randomQuestion['en'] ?? '';
       default:
@@ -48,23 +54,55 @@ class Term {
     }
   }
 
-  factory Term.fromJson(Map<String, dynamic> json) {
-    final questionsList = json['questions'] as List?;
+  factory Term.fromJson(
+    Map<String, dynamic> json,
+    Map<String, Map<String, dynamic>>? languageData,
+  ) {
+    final id = json['id'] as String;
+    final emoji = json['emoji'] as String;
+    final topicIds = List<String>.from(json['topicIds'] as List);
+
+    // Get text from language files
+    String textEn = '';
+    String textTr = '';
+    String textFi = '';
+    String textFr = '';
+
+    if (languageData != null) {
+      textEn = languageData['en']?['terms']?[id] ?? '';
+      textTr = languageData['tr']?['terms']?[id] ?? '';
+      textFi = languageData['fi']?['terms']?[id] ?? '';
+      textFr = languageData['fr']?['terms']?[id] ?? '';
+    }
+
+    // Get questions from language files
     List<Map<String, String>>? questions;
-    if (questionsList != null && questionsList.isNotEmpty) {
-      questions = questionsList
-          .map((q) => Map<String, String>.from(q as Map))
-          .toList();
+    if (languageData != null) {
+      final questionsList = languageData['en']?['questions']?[id] as List?;
+      if (questionsList != null && questionsList.isNotEmpty) {
+        questions = [];
+        for (int i = 0; i < questionsList.length; i++) {
+          final enQ = questionsList[i] as String? ?? '';
+          final trQ =
+              languageData['tr']?['questions']?[id]?[i] as String? ?? '';
+          final fiQ =
+              languageData['fi']?['questions']?[id]?[i] as String? ?? '';
+          final frQ =
+              languageData['fr']?['questions']?[id]?[i] as String? ?? '';
+          questions.add({'en': enQ, 'tr': trQ, 'fi': fiQ, 'fr': frQ});
+        }
+      }
     }
 
     return Term(
-      id: json['id'] as String,
-      topicIds: List<String>.from(json['topicIds'] as List),
-      textEn: json['textEn'] as String,
-      textTr: json['textTr'] as String,
-      textFi: json['textFi'] as String,
+      id: id,
+      topicIds: topicIds,
+      textEn: textEn,
+      textTr: textTr,
+      textFi: textFi,
+      textFr: textFr,
       questions: questions,
-      emoji: json['emoji'] as String,
+      emoji: emoji,
     );
   }
 
@@ -75,6 +113,7 @@ class Term {
       'textEn': textEn,
       'textTr': textTr,
       'textFi': textFi,
+      'textFr': textFr,
       'emoji': emoji,
     };
     if (questions != null && questions!.isNotEmpty) {

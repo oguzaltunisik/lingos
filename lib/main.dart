@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
   void dispose() {
     LanguageService.appLanguageNotifier.removeListener(_onLanguageChanged);
     super.dispose();
-}
+  }
 
   void _onLanguageChanged() {
     setState(() {
@@ -65,6 +65,7 @@ class _MyAppState extends State<MyApp> {
         Locale('tr', ''),
         Locale('en', ''),
         Locale('fi', ''),
+        Locale('fr', ''),
       ],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,

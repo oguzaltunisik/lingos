@@ -13,6 +13,7 @@ import 'package:lingos/pages/learning/actions/pair_action.dart';
 import 'package:lingos/pages/learning/actions/select_action.dart';
 import 'package:lingos/pages/learning/actions/true_false_action.dart';
 import 'package:lingos/pages/learning/actions/merge_action.dart';
+import 'package:lingos/pages/learning/actions/write_action.dart';
 
 class LearningPage extends StatefulWidget {
   final Topic topic;
@@ -58,7 +59,7 @@ class _LearningPageState extends State<LearningPage> {
 
   int get _totalSteps =>
       _terms.length *
-      7; // meet, memory, pair, select, true/false, remember, merge
+      8; // meet, memory, pair, select, true/false, remember, merge, write
 
   Term _getDistractorTerm(int correctIndex) {
     if (_terms.length < 2) return _terms[correctIndex];
@@ -76,7 +77,7 @@ class _LearningPageState extends State<LearningPage> {
       builder: (context, languageCode, child) {
         final isLoading = _terms.isEmpty;
         final currentTerm = (!isLoading && _currentStep < _totalSteps)
-            ? _terms[_currentStep ~/ 7]
+            ? _terms[_currentStep ~/ 8]
             : null;
         final scheme = Theme.of(context).colorScheme;
 
@@ -137,7 +138,7 @@ class _LearningPageState extends State<LearningPage> {
         }
 
         final term = currentTerm!;
-        final stepMod = _currentStep % 7;
+        final stepMod = _currentStep % 8;
         final hasQuestions =
             term.questions != null && term.questions!.isNotEmpty;
         Widget body;
@@ -153,7 +154,7 @@ class _LearningPageState extends State<LearningPage> {
           // Memory action - use current term and 2 distractors
           final memoryTerms = <Term>[term];
           while (memoryTerms.length < 3) {
-            final distractor = _getDistractorTerm(_currentStep ~/ 7);
+            final distractor = _getDistractorTerm(_currentStep ~/ 8);
             if (!memoryTerms.contains(distractor)) {
               memoryTerms.add(distractor);
             } else {
@@ -177,7 +178,7 @@ class _LearningPageState extends State<LearningPage> {
           // Pair action - use current term and 2 distractors
           final pairTerms = <Term>[term];
           while (pairTerms.length < 3) {
-            final distractor = _getDistractorTerm(_currentStep ~/ 7);
+            final distractor = _getDistractorTerm(_currentStep ~/ 8);
             if (!pairTerms.contains(distractor)) {
               pairTerms.add(distractor);
             } else {
@@ -209,7 +210,7 @@ class _LearningPageState extends State<LearningPage> {
           body = SelectAction(
             topic: widget.topic,
             term: term,
-            distractorTerm: _getDistractorTerm(_currentStep ~/ 7),
+            distractorTerm: _getDistractorTerm(_currentStep ~/ 8),
             onNext: _nextStep,
             type: selectTypes[randomIndex],
           );
@@ -220,7 +221,7 @@ class _LearningPageState extends State<LearningPage> {
           body = TrueFalseAction(
             topic: widget.topic,
             term: term,
-            distractorTerm: _getDistractorTerm(_currentStep ~/ 7),
+            distractorTerm: _getDistractorTerm(_currentStep ~/ 8),
             onNext: _nextStep,
             type: allTrueFalseTypes[randomIndex],
           );
@@ -232,7 +233,7 @@ class _LearningPageState extends State<LearningPage> {
             onNext: _nextStep,
             mode: DisplayMode.remember,
           );
-        } else {
+        } else if (stepMod == 6) {
           // Merge action
           final allMergeTypes = MergeActionType.values;
           final mergeTypes = hasQuestions
@@ -246,6 +247,16 @@ class _LearningPageState extends State<LearningPage> {
             term: term,
             onNext: _nextStep,
             type: mergeTypes[randomIndex],
+          );
+        } else {
+          // Write action
+          final allWriteTypes = WriteActionType.values;
+          final randomIndex = _random.nextInt(allWriteTypes.length);
+          body = WriteAction(
+            topic: widget.topic,
+            term: term,
+            onNext: _nextStep,
+            type: allWriteTypes[randomIndex],
           );
         }
 

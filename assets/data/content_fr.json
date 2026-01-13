@@ -1,0 +1,118 @@
+{
+  "topics": {
+    "animals": "Animaux",
+    "colors": "Couleurs",
+    "numbers": "Nombres",
+    "shapes": "Formes",
+    "directions": "Directions"
+  },
+  "terms": {
+    "animals_1": "chat",
+    "animals_2": "chien",
+    "animals_3": "oiseau",
+    "animals_4": "poisson",
+    "animals_5": "cheval",
+    "colors_1": "rouge",
+    "colors_2": "bleu",
+    "colors_3": "vert",
+    "colors_4": "jaune",
+    "colors_5": "noir",
+    "numbers_1": "un",
+    "numbers_2": "deux",
+    "numbers_3": "trois",
+    "numbers_4": "quatre",
+    "numbers_5": "cinq",
+    "shapes_1": "cercle",
+    "shapes_2": "carré",
+    "shapes_3": "triangle",
+    "shapes_4": "rectangle",
+    "shapes_5": "étoile",
+    "directions_1": "gauche",
+    "directions_2": "droite",
+    "directions_3": "avant",
+    "directions_4": "arrière",
+    "directions_5": "haut"
+  },
+  "questions": {
+    "animals_1": [
+      "Quel animal fait miaou ?",
+      "Quel est un animal de compagnie commun qui ronronne ?"
+    ],
+    "animals_2": [
+      "Quel animal aboie ?",
+      "Quel animal est connu comme le meilleur ami de l'homme ?"
+    ],
+    "animals_4": [
+      "Quel animal vit dans l'eau et nage ?",
+      "Quel animal respire par les branchies ?"
+    ],
+    "animals_5": [
+      "Sur quel animal les gens montent-ils avec une selle ?",
+      "Quel grand animal les gens montent-ils ?"
+    ],
+    "colors_1": [
+      "De quelle couleur est l'intérieur d'une pastèque ?",
+      "De quelle couleur sont la plupart des pommes ?"
+    ],
+    "colors_3": [
+      "De quelle couleur est la plupart de l'herbe ?",
+      "De quelle couleur sont la plupart des feuilles ?"
+    ],
+    "colors_4": [
+      "De quelle couleur est la peau d'une banane mûre ?",
+      "De quelle couleur est le soleil ?"
+    ],
+    "colors_5": [
+      "De quelle couleur est le charbon ?",
+      "De quelle couleur est le ciel nocturne ?"
+    ],
+    "numbers_1": [
+      "Combien de lunes la Terre a-t-elle ?",
+      "Quel nombre vient après zéro ?"
+    ],
+    "numbers_2": [
+      "Combien d'yeux la plupart des gens ont-ils ?",
+      "Combien de mains les gens ont-ils ?"
+    ],
+    "numbers_3": [
+      "Combien de côtés un triangle a-t-il ?",
+      "Combien de jambes un trépied a-t-il ?"
+    ],
+    "numbers_5": [
+      "Combien de doigts y a-t-il sur une main ?",
+      "Combien d'orteils y a-t-il sur un pied ?"
+    ],
+    "shapes_2": [
+      "Quelle forme a quatre côtés égaux et quatre angles droits ?",
+      "Quelle forme a quatre coins ?"
+    ],
+    "shapes_3": [
+      "Quelle forme a trois coins ?",
+      "Quelle forme a le moins de côtés ?"
+    ],
+    "shapes_4": [
+      "Quelle forme a deux côtés longs et deux côtés courts avec des angles droits ?",
+      "Quelle forme est généralement une porte ?"
+    ],
+    "shapes_5": [
+      "Quelle forme apparaît dans le ciel nocturne avec cinq pointes dans les dessins ?",
+      "Quelle forme voyez-vous dans le ciel la nuit ?"
+    ],
+    "directions_1": [
+      "Si vous tournez à l'opposé de la droite, dans quelle direction allez-vous ?",
+      "Quel côté est opposé à la droite ?"
+    ],
+    "directions_2": [
+      "En faisant face au nord, quelle direction est l'est ?",
+      "Quel côté est opposé à la gauche ?"
+    ],
+    "directions_4": [
+      "Si vous marchez dans le sens opposé à l'avant, quelle direction est-ce ?",
+      "Quelle direction signifie derrière ?"
+    ],
+    "directions_5": [
+      "Dans quelle direction regardez-vous pour voir le ciel au-dessus ?",
+      "Quelle direction est au-dessus ?"
+    ]
+  }
+}

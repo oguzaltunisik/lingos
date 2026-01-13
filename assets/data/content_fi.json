@@ -1,0 +1,118 @@
+{
+  "topics": {
+    "animals": "Eläimet",
+    "colors": "Värit",
+    "numbers": "Numerot",
+    "shapes": "Muodot",
+    "directions": "Suunnat"
+  },
+  "terms": {
+    "animals_1": "kissa",
+    "animals_2": "koira",
+    "animals_3": "lintu",
+    "animals_4": "kala",
+    "animals_5": "hevonen",
+    "colors_1": "punainen",
+    "colors_2": "sininen",
+    "colors_3": "vihreä",
+    "colors_4": "keltainen",
+    "colors_5": "musta",
+    "numbers_1": "yksi",
+    "numbers_2": "kaksi",
+    "numbers_3": "kolme",
+    "numbers_4": "neljä",
+    "numbers_5": "viisi",
+    "shapes_1": "ympyrä",
+    "shapes_2": "neliö",
+    "shapes_3": "kolmio",
+    "shapes_4": "suorakulmio",
+    "shapes_5": "tähti",
+    "directions_1": "vasen",
+    "directions_2": "oikea",
+    "directions_3": "eteenpäin",
+    "directions_4": "taaksepäin",
+    "directions_5": "ylös"
+  },
+  "questions": {
+    "animals_1": [
+      "Mikä eläin maukuu?",
+      "Mikä on yleinen lemmikki, joka kehrää?"
+    ],
+    "animals_2": [
+      "Mikä eläin haukkuu?",
+      "Mikä eläin tunnetaan ihmisen parhaana ystävänä?"
+    ],
+    "animals_4": [
+      "Mikä eläin elää vedessä ja ui?",
+      "Mikä eläin hengittää kiduksilla?"
+    ],
+    "animals_5": [
+      "Mihin eläimeen ratsastetaan satulalla?",
+      "Mikä iso eläin on, jolla ihmiset ratsastavat?"
+    ],
+    "colors_1": [
+      "Mikä väri on vesimelonin sisällä?",
+      "Mikä väri on useimmilla omenoilla?"
+    ],
+    "colors_3": [
+      "Mikä väri suurimmalla osalla nurmea on?",
+      "Mikä väri on useimmilla lehdillä?"
+    ],
+    "colors_4": [
+      "Minkä värinen on kypsän banaanin kuori?",
+      "Mikä väri on aurinko?"
+    ],
+    "colors_5": [
+      "Minkä värinen on kivihiili?",
+      "Mikä väri on yötaivas?"
+    ],
+    "numbers_1": [
+      "Kuinka monta kuuta maapallolla on?",
+      "Mikä numero tulee nollan jälkeen?"
+    ],
+    "numbers_2": [
+      "Kuinka monta silmää useimmilla ihmisillä on?",
+      "Kuinka monta kättä ihmisillä on?"
+    ],
+    "numbers_3": [
+      "Kuinka monta sivua kolmiolla on?",
+      "Kuinka monta jalkaa kolmijalalla on?"
+    ],
+    "numbers_5": [
+      "Kuinka monta sormea yhdessä kädessä on?",
+      "Kuinka monta varvasta on yhdessä jalassa?"
+    ],
+    "shapes_2": [
+      "Mikä muoto on neljä yhtä pitkää sivua ja neljä suoraa kulmaa?",
+      "Mikä muoto on neljä kulmaa?"
+    ],
+    "shapes_3": [
+      "Missä muodossa on kolme kulmaa?",
+      "Mikä muoto on vähiten sivuja?"
+    ],
+    "shapes_4": [
+      "Missä muodossa on kaksi pitkää ja kaksi lyhyttä sivua ja suorat kulmat?",
+      "Mikä muoto on ovi yleensä?"
+    ],
+    "shapes_5": [
+      "Mikä muoto näkyy piirroksissa yötaivaalla viidellä sakaralla?",
+      "Mikä muoto näkyy taivaalla yöllä?"
+    ],
+    "directions_1": [
+      "Jos käännyt oikean vastakkaiseen suuntaan, minne menet?",
+      "Mikä puoli on oikean vastakohta?"
+    ],
+    "directions_2": [
+      "Kun katsot pohjoiseen, mikä suunta on itä?",
+      "Mikä puoli on vasemman vastakohta?"
+    ],
+    "directions_4": [
+      "Mikä suunta on vastakkainen eteenpäin suunnalle?",
+      "Mikä suunta tarkoittaa taaksepäin?"
+    ],
+    "directions_5": [
+      "Mihin suuntaan katsot nähdäksesi taivaan yläpuolellasi?",
+      "Mikä suunta on ylhäällä?"
+    ]
+  }
+}

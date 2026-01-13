@@ -94,6 +94,8 @@ class AppLocalizations {
         return _trStrings[key] ?? key;
       case 'fi':
         return _fiStrings[key] ?? key;
+      case 'fr':
+        return _frStrings[key] ?? _enStrings[key] ?? key;
       case 'en':
       default:
         return _enStrings[key] ?? key;
@@ -147,6 +149,7 @@ class AppLocalizations {
     'language_tr': 'Türkçe',
     'language_en': 'English',
     'language_fi': 'Suomi',
+    'language_fr': 'Français',
   };
 
   static const Map<String, String> _trStrings = {
@@ -196,6 +199,7 @@ class AppLocalizations {
     'language_tr': 'Türkçe',
     'language_en': 'English',
     'language_fi': 'Suomi',
+    'language_fr': 'Français',
   };
 
   static const Map<String, String> _fiStrings = {
@@ -246,5 +250,58 @@ class AppLocalizations {
     'language_tr': 'Türkçe',
     'language_en': 'English',
     'language_fi': 'Suomi',
+    'language_fr': 'Français',
+  };
+
+  static const Map<String, String> _frStrings = {
+    'appTitle': 'Lingos',
+    'welcomeMessage': 'Bienvenue sur Lingos !',
+    'nativeLanguage': 'Langue maternelle :',
+    'targetLanguage': 'Langue cible :',
+    'selectLanguages': 'Sélectionner les langues',
+    'nativeLanguageTitle': 'Langue maternelle',
+    'targetLanguageTitle': 'Langue cible',
+    'continueButton': 'Continuer',
+    'selectBothLanguages':
+        'Veuillez sélectionner la langue maternelle et la langue cible',
+    'languagesMustBeDifferent':
+        'La langue maternelle et la langue cible doivent être différentes',
+    'errorSavingLanguages': 'Erreur lors de l\'enregistrement des langues : ',
+    // Learning Page
+    'nextButton': 'Suivant',
+    'homePageButton': 'Accueil',
+    'showTranslation': 'Afficher la traduction',
+    'settingsTitle': 'Paramètres',
+    'languageSettings': 'Paramètres de langue',
+    'sessionCompleted': 'Session terminée',
+    'correct': 'Correct',
+    'incorrect': 'Incorrect',
+    'checkButton': 'Vérifier',
+    'skipButton': 'Passer',
+    'alreadyKnowButton': 'Je connais déjà',
+    'wantToLearnButton': 'Je veux apprendre',
+    'actionMeet': 'Rencontrer',
+    'actionAudioToTarget': 'Écoutez, choisissez le mot',
+    'actionAudioToVisual': 'Écoutez, choisissez l\'image',
+    'actionVisualToAudio': 'Regardez, choisissez l\'audio',
+    'actionAudioToTargetMerge': 'Écoutez, construisez le mot',
+    'actionVisualToTargetMerge': 'Regardez, construisez le mot',
+    'actionQuestionToTargetMerge': 'Lisez la question, construisez le mot',
+    'actionQuestionToTarget': 'Lisez la question, choisissez le mot',
+    'actionQuestionToAudio': 'Lisez la question, choisissez l\'audio',
+    'actionRemember': 'Se souvenir',
+    'actionVisualToTarget': 'Regardez, choisissez le mot',
+    'actionTargetToVisual': 'Lisez, choisissez l\'image',
+    'actionTargetToAudio': 'Lisez, choisissez l\'audio',
+    'actionPair': 'Associer',
+    'actionMemory': 'Mémoire',
+    'actionSelectCorrectOption': 'Faire une sélection',
+    'actionBuildTerm': 'Construire le terme',
+    'actionTrueFalse': 'Vrai ou Faux',
+    // Language names
+    'language_tr': 'Türkçe',
+    'language_en': 'English',
+    'language_fi': 'Suomi',
+    'language_fr': 'Français',
   };
 }

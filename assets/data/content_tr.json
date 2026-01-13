@@ -1,0 +1,118 @@
+{
+  "topics": {
+    "animals": "Hayvanlar",
+    "colors": "Renkler",
+    "numbers": "Sayılar",
+    "shapes": "Şekiller",
+    "directions": "Yönler"
+  },
+  "terms": {
+    "animals_1": "kedi",
+    "animals_2": "köpek",
+    "animals_3": "kuş",
+    "animals_4": "balık",
+    "animals_5": "at",
+    "colors_1": "kırmızı",
+    "colors_2": "mavi",
+    "colors_3": "yeşil",
+    "colors_4": "sarı",
+    "colors_5": "siyah",
+    "numbers_1": "bir",
+    "numbers_2": "iki",
+    "numbers_3": "üç",
+    "numbers_4": "dört",
+    "numbers_5": "beş",
+    "shapes_1": "daire",
+    "shapes_2": "kare",
+    "shapes_3": "üçgen",
+    "shapes_4": "dikdörtgen",
+    "shapes_5": "yıldız",
+    "directions_1": "sol",
+    "directions_2": "sağ",
+    "directions_3": "ileri",
+    "directions_4": "geri",
+    "directions_5": "yukarı"
+  },
+  "questions": {
+    "animals_1": [
+      "Hangi hayvan miyav der?",
+      "Mırıldayan yaygın bir evcil hayvan nedir?"
+    ],
+    "animals_2": [
+      "Hangi hayvan havlar?",
+      "İnsanın en iyi arkadaşı olarak bilinen hayvan nedir?"
+    ],
+    "animals_4": [
+      "Hangi hayvan suda yaşar ve yüzer?",
+      "Solungaçlarla nefes alan hayvan nedir?"
+    ],
+    "animals_5": [
+      "Hangi hayvana eyerle binilir?",
+      "İnsanların bindiği büyük hayvan nedir?"
+    ],
+    "colors_1": [
+      "Karpuzun içi ne renktir?",
+      "Çoğu elma ne renktir?"
+    ],
+    "colors_3": [
+      "Çoğu çim ne renktir?",
+      "Çoğu yaprak ne renktir?"
+    ],
+    "colors_4": [
+      "Olgun muz kabuğu ne renktir?",
+      "Güneş ne renktir?"
+    ],
+    "colors_5": [
+      "Kömür ne renktir?",
+      "Gece gökyüzü ne renktir?"
+    ],
+    "numbers_1": [
+      "Dünyanın kaç uydusu var?",
+      "Sıfırdan sonra hangi sayı gelir?"
+    ],
+    "numbers_2": [
+      "Çoğu insanın kaç gözü vardır?",
+      "İnsanların kaç eli vardır?"
+    ],
+    "numbers_3": [
+      "Üçgenin kaç kenarı vardır?",
+      "Bir üçayağın kaç ayağı vardır?"
+    ],
+    "numbers_5": [
+      "Bir elde kaç parmak vardır?",
+      "Bir ayakta kaç parmak vardır?"
+    ],
+    "shapes_2": [
+      "Dört eşit kenarı ve dört dik açısı olan şekil hangisidir?",
+      "Dört köşesi olan şekil nedir?"
+    ],
+    "shapes_3": [
+      "Üç köşesi olan şekil hangisidir?",
+      "En az kenarı olan şekil nedir?"
+    ],
+    "shapes_4": [
+      "İki uzun iki kısa kenarlı ve dik açılı şekil hangisidir?",
+      "Bir kapı genellikle hangi şekildedir?"
+    ],
+    "shapes_5": [
+      "Çizimlerde gece gökyüzünde beş köşeyle görünen şekil hangisi?",
+      "Gece gökyüzünde hangi şekli görürsün?"
+    ],
+    "directions_1": [
+      "Sağın tersi yöne dönersen hangi yöne gidersin?",
+      "Sağın karşısındaki taraf hangisidir?"
+    ],
+    "directions_2": [
+      "Kuzeye bakarken doğu hangi yö olur?",
+      "Solun karşısındaki taraf hangisidir?"
+    ],
+    "directions_4": [
+      "İleri yönünün tam tersi hangi yöndür?",
+      "Hangi yön geri anlamına gelir?"
+    ],
+    "directions_5": [
+      "Başının üstündeki gökyüzüne bakmak için hangi yöne bakarsın?",
+      "Hangi yön yukarıdır?"
+    ]
+  }
+}

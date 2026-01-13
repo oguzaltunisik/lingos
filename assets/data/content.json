@@ -2,530 +2,150 @@
   "topics": [
     {
       "id": "animals",
-      "emoji": "🐾",
-      "textEn": "Animals",
-      "textTr": "Hayvanlar",
-      "textFi": "Eläimet"
+      "emoji": "🐾"
     },
     {
       "id": "colors",
-      "emoji": "🎨",
-      "textEn": "Colors",
-      "textTr": "Renkler",
-      "textFi": "Värit"
+      "emoji": "🎨"
     },
     {
       "id": "numbers",
-      "emoji": "🔢",
-      "textEn": "Numbers",
-      "textTr": "Sayılar",
-      "textFi": "Numerot"
+      "emoji": "🔢"
     },
     {
       "id": "shapes",
-      "emoji": "🟠",
-      "textEn": "Shapes",
-      "textTr": "Şekiller",
-      "textFi": "Muodot"
+      "emoji": "🟠"
     },
     {
       "id": "directions",
-      "emoji": "🧭",
-      "textEn": "Directions",
-      "textTr": "Yönler",
-      "textFi": "Suunnat"
+      "emoji": "🧭"
     }
   ],
   "terms": [
     {
       "id": "animals_1",
-      "topicIds": [
-        "animals"
-      ],
-      "textEn": "cat",
-      "textTr": "kedi",
-      "textFi": "kissa",
-      "emoji": "🐱",
-      "questions": [
-        {
-          "en": "Which animal says meow?",
-          "tr": "Hangi hayvan miyav der?",
-          "fi": "Mikä eläin maukuu?"
-        },
-        {
-          "en": "What is a common pet that purrs?",
-          "tr": "Mırıldayan yaygın bir evcil hayvan nedir?",
-          "fi": "Mikä on yleinen lemmikki, joka kehrää?"
-        }
-      ]
+      "topicIds": ["animals"],
+      "emoji": "🐱"
     },
     {
       "id": "animals_2",
-      "topicIds": [
-        "animals"
-      ],
-      "textEn": "dog",
-      "textTr": "köpek",
-      "textFi": "koira",
-      "emoji": "🐶",
-      "questions": [
-        {
-          "en": "Which animal barks?",
-          "tr": "Hangi hayvan havlar?",
-          "fi": "Mikä eläin haukkuu?"
-        },
-        {
-          "en": "What animal is known as man's best friend?",
-          "tr": "İnsanın en iyi arkadaşı olarak bilinen hayvan nedir?",
-          "fi": "Mikä eläin tunnetaan ihmisen parhaana ystävänä?"
-        }
-      ]
+      "topicIds": ["animals"],
+      "emoji": "🐶"
     },
     {
       "id": "animals_3",
-      "topicIds": [
-        "animals"
-      ],
-      "textEn": "bird",
-      "textTr": "kuş",
-      "textFi": "lintu",
+      "topicIds": ["animals"],
       "emoji": "🐦"
     },
     {
       "id": "animals_4",
-      "topicIds": [
-        "animals"
-      ],
-      "textEn": "fish",
-      "textTr": "balık",
-      "textFi": "kala",
-      "emoji": "🐟",
-      "questions": [
-        {
-          "en": "Which animal lives in water and swims?",
-          "tr": "Hangi hayvan suda yaşar ve yüzer?",
-          "fi": "Mikä eläin elää vedessä ja ui?"
-        },
-        {
-          "en": "What animal breathes through gills?",
-          "tr": "Solungaçlarla nefes alan hayvan nedir?",
-          "fi": "Mikä eläin hengittää kiduksilla?"
-        }
-      ]
+      "topicIds": ["animals"],
+      "emoji": "🐟"
     },
     {
       "id": "animals_5",
-      "topicIds": [
-        "animals"
-      ],
-      "textEn": "horse",
-      "textTr": "at",
-      "textFi": "hevonen",
-      "emoji": "🐴",
-      "questions": [
-        {
-          "en": "Which animal do people ride with a saddle?",
-          "tr": "Hangi hayvana eyerle binilir?",
-          "fi": "Mihin eläimeen ratsastetaan satulalla?"
-        },
-        {
-          "en": "What large animal do people ride?",
-          "tr": "İnsanların bindiği büyük hayvan nedir?",
-          "fi": "Mikä iso eläin on, jolla ihmiset ratsastavat?"
-        }
-      ]
+      "topicIds": ["animals"],
+      "emoji": "🐴"
     },
     {
       "id": "colors_1",
-      "topicIds": [
-        "colors"
-      ],
-      "textEn": "red",
-      "textTr": "kırmızı",
-      "textFi": "punainen",
-      "emoji": "🟥",
-      "questions": [
-        {
-          "en": "What color is the inside of a watermelon?",
-          "tr": "Karpuzun içi ne renktir?",
-          "fi": "Mikä väri on vesimelonin sisällä?"
-        },
-        {
-          "en": "What color are most apples?",
-          "tr": "Çoğu elma ne renktir?",
-          "fi": "Mikä väri on useimmilla omenoilla?"
-        }
-      ]
+      "topicIds": ["colors"],
+      "emoji": "🟥"
     },
     {
       "id": "colors_2",
-      "topicIds": [
-        "colors"
-      ],
-      "textEn": "blue",
-      "textTr": "mavi",
-      "textFi": "sininen",
+      "topicIds": ["colors"],
       "emoji": "🟦"
     },
     {
       "id": "colors_3",
-      "topicIds": [
-        "colors"
-      ],
-      "textEn": "green",
-      "textTr": "yeşil",
-      "textFi": "vihreä",
-      "emoji": "🟩",
-      "questions": [
-        {
-          "en": "What color is most grass?",
-          "tr": "Çoğu çim ne renktir?",
-          "fi": "Mikä väri suurimmalla osalla nurmea on?"
-        },
-        {
-          "en": "What color are most leaves?",
-          "tr": "Çoğu yaprak ne renktir?",
-          "fi": "Mikä väri on useimmilla lehdillä?"
-        }
-      ]
+      "topicIds": ["colors"],
+      "emoji": "🟩"
     },
     {
       "id": "colors_4",
-      "topicIds": [
-        "colors"
-      ],
-      "textEn": "yellow",
-      "textTr": "sarı",
-      "textFi": "keltainen",
-      "emoji": "🟨",
-      "questions": [
-        {
-          "en": "What color is a ripe banana peel?",
-          "tr": "Olgun muz kabuğu ne renktir?",
-          "fi": "Minkä värinen on kypsän banaanin kuori?"
-        },
-        {
-          "en": "What color is the sun?",
-          "tr": "Güneş ne renktir?",
-          "fi": "Mikä väri on aurinko?"
-        }
-      ]
+      "topicIds": ["colors"],
+      "emoji": "🟨"
     },
     {
       "id": "colors_5",
-      "topicIds": [
-        "colors"
-      ],
-      "textEn": "black",
-      "textTr": "siyah",
-      "textFi": "musta",
-      "emoji": "⬛",
-      "questions": [
-        {
-          "en": "What color is coal?",
-          "tr": "Kömür ne renktir?",
-          "fi": "Minkä värinen on kivihiili?"
-        },
-        {
-          "en": "What color is the night sky?",
-          "tr": "Gece gökyüzü ne renktir?",
-          "fi": "Mikä väri on yötaivas?"
-        }
-      ]
+      "topicIds": ["colors"],
+      "emoji": "⬛"
     },
     {
       "id": "numbers_1",
-      "topicIds": [
-        "numbers"
-      ],
-      "textEn": "one",
-      "textTr": "bir",
-      "textFi": "yksi",
-      "emoji": "1️⃣",
-      "questions": [
-        {
-          "en": "How many moons does Earth have?",
-          "tr": "Dünyanın kaç uydusu var?",
-          "fi": "Kuinka monta kuuta maapallolla on?"
-        },
-        {
-          "en": "What number comes after zero?",
-          "tr": "Sıfırdan sonra hangi sayı gelir?",
-          "fi": "Mikä numero tulee nollan jälkeen?"
-        }
-      ]
+      "topicIds": ["numbers"],
+      "emoji": "1️⃣"
     },
     {
       "id": "numbers_2",
-      "topicIds": [
-        "numbers"
-      ],
-      "textEn": "two",
-      "textTr": "iki",
-      "textFi": "kaksi",
-      "emoji": "2️⃣",
-      "questions": [
-        {
-          "en": "How many eyes do most people have?",
-          "tr": "Çoğu insanın kaç gözü vardır?",
-          "fi": "Kuinka monta silmää useimmilla ihmisillä on?"
-        },
-        {
-          "en": "How many hands do people have?",
-          "tr": "İnsanların kaç eli vardır?",
-          "fi": "Kuinka monta kättä ihmisillä on?"
-        }
-      ]
+      "topicIds": ["numbers"],
+      "emoji": "2️⃣"
     },
     {
       "id": "numbers_3",
-      "topicIds": [
-        "numbers"
-      ],
-      "textEn": "three",
-      "textTr": "üç",
-      "textFi": "kolme",
-      "emoji": "3️⃣",
-      "questions": [
-        {
-          "en": "How many sides does a triangle have?",
-          "tr": "Üçgenin kaç kenarı vardır?",
-          "fi": "Kuinka monta sivua kolmiolla on?"
-        },
-        {
-          "en": "How many legs does a tripod have?",
-          "tr": "Bir üçayağın kaç ayağı vardır?",
-          "fi": "Kuinka monta jalkaa kolmijalalla on?"
-        }
-      ]
+      "topicIds": ["numbers"],
+      "emoji": "3️⃣"
     },
     {
       "id": "numbers_4",
-      "topicIds": [
-        "numbers"
-      ],
-      "textEn": "four",
-      "textTr": "dört",
-      "textFi": "neljä",
+      "topicIds": ["numbers"],
       "emoji": "4️⃣"
     },
     {
       "id": "numbers_5",
-      "topicIds": [
-        "numbers"
-      ],
-      "textEn": "five",
-      "textTr": "beş",
-      "textFi": "viisi",
-      "emoji": "5️⃣",
-      "questions": [
-        {
-          "en": "How many fingers are on one hand?",
-          "tr": "Bir elde kaç parmak vardır?",
-          "fi": "Kuinka monta sormea yhdessä kädessä on?"
-        },
-        {
-          "en": "How many toes are on one foot?",
-          "tr": "Bir ayakta kaç parmak vardır?",
-          "fi": "Kuinka monta varvasta on yhdessä jalassa?"
-        }
-      ]
+      "topicIds": ["numbers"],
+      "emoji": "5️⃣"
     },
     {
       "id": "shapes_1",
-      "topicIds": [
-        "shapes"
-      ],
-      "textEn": "circle",
-      "textTr": "daire",
-      "textFi": "ympyrä",
+      "topicIds": ["shapes"],
       "emoji": "⚪"
     },
     {
       "id": "shapes_2",
-      "topicIds": [
-        "shapes"
-      ],
-      "textEn": "square",
-      "textTr": "kare",
-      "textFi": "neliö",
-      "emoji": "🟥",
-      "questions": [
-        {
-          "en": "Which shape has four equal sides and four right angles?",
-          "tr": "Dört eşit kenarı ve dört dik açısı olan şekil hangisidir?",
-          "fi": "Mikä muoto on neljä yhtä pitkää sivua ja neljä suoraa kulmaa?"
-        },
-        {
-          "en": "What shape has four corners?",
-          "tr": "Dört köşesi olan şekil nedir?",
-          "fi": "Mikä muoto on neljä kulmaa?"
-        }
-      ]
+      "topicIds": ["shapes"],
+      "emoji": "🟥"
     },
     {
       "id": "shapes_3",
-      "topicIds": [
-        "shapes"
-      ],
-      "textEn": "triangle",
-      "textTr": "üçgen",
-      "textFi": "kolmio",
-      "emoji": "🔺",
-      "questions": [
-        {
-          "en": "Which shape has three corners?",
-          "tr": "Üç köşesi olan şekil hangisidir?",
-          "fi": "Missä muodossa on kolme kulmaa?"
-        },
-        {
-          "en": "What shape has the fewest sides?",
-          "tr": "En az kenarı olan şekil nedir?",
-          "fi": "Mikä muoto on vähiten sivuja?"
-        }
-      ]
+      "topicIds": ["shapes"],
+      "emoji": "🔺"
     },
     {
       "id": "shapes_4",
-      "topicIds": [
-        "shapes"
-      ],
-      "textEn": "rectangle",
-      "textTr": "dikdörtgen",
-      "textFi": "suorakulmio",
-      "emoji": "🟦",
-      "questions": [
-        {
-          "en": "Which shape has two long and two short sides with right angles?",
-          "tr": "İki uzun iki kısa kenarlı ve dik açılı şekil hangisidir?",
-          "fi": "Missä muodossa on kaksi pitkää ja kaksi lyhyttä sivua ja suorat kulmat?"
-        },
-        {
-          "en": "What shape is a door usually?",
-          "tr": "Bir kapı genellikle hangi şekildedir?",
-          "fi": "Mikä muoto on ovi yleensä?"
-        }
-      ]
+      "topicIds": ["shapes"],
+      "emoji": "🟦"
     },
     {
       "id": "shapes_5",
-      "topicIds": [
-        "shapes"
-      ],
-      "textEn": "star",
-      "textTr": "yıldız",
-      "textFi": "tähti",
-      "emoji": "⭐",
-      "questions": [
-        {
-          "en": "Which shape appears in the night sky with five points in drawings?",
-          "tr": "Çizimlerde gece gökyüzünde beş köşeyle görünen şekil hangisi?",
-          "fi": "Mikä muoto näkyy piirroksissa yötaivaalla viidellä sakaralla?"
-        },
-        {
-          "en": "What shape do you see in the sky at night?",
-          "tr": "Gece gökyüzünde hangi şekli görürsün?",
-          "fi": "Mikä muoto näkyy taivaalla yöllä?"
-        }
-      ]
+      "topicIds": ["shapes"],
+      "emoji": "⭐"
     },
     {
       "id": "directions_1",
-      "topicIds": [
-        "directions"
-      ],
-      "textEn": "left",
-      "textTr": "sol",
-      "textFi": "vasen",
-      "emoji": "⬅️",
-      "questions": [
-        {
-          "en": "If you turn opposite of right, which way do you go?",
-          "tr": "Sağın tersi yöne dönersen hangi yöne gidersin?",
-          "fi": "Jos käännyt oikean vastakkaiseen suuntaan, minne menet?"
-        },
-        {
-          "en": "Which side is opposite of right?",
-          "tr": "Sağın karşısındaki taraf hangisidir?",
-          "fi": "Mikä puoli on oikean vastakohta?"
-        }
-      ]
+      "topicIds": ["directions"],
+      "emoji": "⬅️"
     },
     {
       "id": "directions_2",
-      "topicIds": [
-        "directions"
-      ],
-      "textEn": "right",
-      "textTr": "sağ",
-      "textFi": "oikea",
-      "emoji": "➡️",
-      "questions": [
-        {
-          "en": "When facing north, which direction is east?",
-          "tr": "Kuzeye bakarken doğu hangi yö olur?",
-          "fi": "Kun katsot pohjoiseen, mikä suunta on itä?"
-        },
-        {
-          "en": "Which side is opposite of left?",
-          "tr": "Solun karşısındaki taraf hangisidir?",
-          "fi": "Mikä puoli on vasemman vastakohta?"
-        }
-      ]
+      "topicIds": ["directions"],
+      "emoji": "➡️"
     },
     {
       "id": "directions_3",
-      "topicIds": [
-        "directions"
-      ],
-      "textEn": "forward",
-      "textTr": "ileri",
-      "textFi": "eteenpäin",
+      "topicIds": ["directions"],
       "emoji": "⬆️"
     },
     {
       "id": "directions_4",
-      "topicIds": [
-        "directions"
-      ],
-      "textEn": "backward",
-      "textTr": "geri",
-      "textFi": "taaksepäin",
-      "emoji": "⬇️",
-      "questions": [
-        {
-          "en": "If you walk the opposite way of forward, which direction is that?",
-          "tr": "İleri yönünün tam tersi hangi yöndür?",
-          "fi": "Mikä suunta on vastakkainen eteenpäin suunnalle?"
-        },
-        {
-          "en": "Which direction means behind?",
-          "tr": "Hangi yön geri anlamına gelir?",
-          "fi": "Mikä suunta tarkoittaa taaksepäin?"
-        }
-      ]
+      "topicIds": ["directions"],
+      "emoji": "⬇️"
     },
     {
       "id": "directions_5",
-      "topicIds": [
-        "directions"
-      ],
-      "textEn": "up",
-      "textTr": "yukarı",
-      "textFi": "ylös",
-      "emoji": "🔼",
-      "questions": [
-        {
-          "en": "Which direction do you look to see the sky overhead?",
-          "tr": "Başının üstündeki gökyüzüne bakmak için hangi yöne bakarsın?",
-          "fi": "Mihin suuntaan katsot nähdäksesi taivaan yläpuolellasi?"
-        },
-        {
-          "en": "Which direction is above?",
-          "tr": "Hangi yön yukarıdır?",
-          "fi": "Mikä suunta on ylhäällä?"
-        }
-      ]
+      "topicIds": ["directions"],
+      "emoji": "🔼"
     }
   ]
 }

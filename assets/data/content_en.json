@@ -1,0 +1,118 @@
+{
+  "topics": {
+    "animals": "Animals",
+    "colors": "Colors",
+    "numbers": "Numbers",
+    "shapes": "Shapes",
+    "directions": "Directions"
+  },
+  "terms": {
+    "animals_1": "cat",
+    "animals_2": "dog",
+    "animals_3": "bird",
+    "animals_4": "fish",
+    "animals_5": "horse",
+    "colors_1": "red",
+    "colors_2": "blue",
+    "colors_3": "green",
+    "colors_4": "yellow",
+    "colors_5": "black",
+    "numbers_1": "one",
+    "numbers_2": "two",
+    "numbers_3": "three",
+    "numbers_4": "four",
+    "numbers_5": "five",
+    "shapes_1": "circle",
+    "shapes_2": "square",
+    "shapes_3": "triangle",
+    "shapes_4": "rectangle",
+    "shapes_5": "star",
+    "directions_1": "left",
+    "directions_2": "right",
+    "directions_3": "forward",
+    "directions_4": "backward",
+    "directions_5": "up"
+  },
+  "questions": {
+    "animals_1": [
+      "Which animal says meow?",
+      "What is a common pet that purrs?"
+    ],
+    "animals_2": [
+      "Which animal barks?",
+      "What animal is known as man's best friend?"
+    ],
+    "animals_4": [
+      "Which animal lives in water and swims?",
+      "What animal breathes through gills?"
+    ],
+    "animals_5": [
+      "Which animal do people ride with a saddle?",
+      "What large animal do people ride?"
+    ],
+    "colors_1": [
+      "What color is the inside of a watermelon?",
+      "What color are most apples?"
+    ],
+    "colors_3": [
+      "What color is most grass?",
+      "What color are most leaves?"
+    ],
+    "colors_4": [
+      "What color is a ripe banana peel?",
+      "What color is the sun?"
+    ],
+    "colors_5": [
+      "What color is coal?",
+      "What color is the night sky?"
+    ],
+    "numbers_1": [
+      "How many moons does Earth have?",
+      "What number comes after zero?"
+    ],
+    "numbers_2": [
+      "How many eyes do most people have?",
+      "How many hands do people have?"
+    ],
+    "numbers_3": [
+      "How many sides does a triangle have?",
+      "How many legs does a tripod have?"
+    ],
+    "numbers_5": [
+      "How many fingers are on one hand?",
+      "How many toes are on one foot?"
+    ],
+    "shapes_2": [
+      "Which shape has four equal sides and four right angles?",
+      "What shape has four corners?"
+    ],
+    "shapes_3": [
+      "Which shape has three corners?",
+      "What shape has the fewest sides?"
+    ],
+    "shapes_4": [
+      "Which shape has two long and two short sides with right angles?",
+      "What shape is a door usually?"
+    ],
+    "shapes_5": [
+      "Which shape appears in the night sky with five points in drawings?",
+      "What shape do you see in the sky at night?"
+    ],
+    "directions_1": [
+      "If you turn opposite of right, which way do you go?",
+      "Which side is opposite of right?"
+    ],
+    "directions_2": [
+      "When facing north, which direction is east?",
+      "Which side is opposite of left?"
+    ],
+    "directions_4": [
+      "If you walk the opposite way of forward, which direction is that?",
+      "Which direction means behind?"
+    ],
+    "directions_5": [
+      "Which direction do you look to see the sky overhead?",
+      "Which direction is above?"
+    ]
+  }
+}

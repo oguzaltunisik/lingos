@@ -8,7 +8,7 @@ class LanguageService {
   static const String _keyAppLanguage = 'app_language';
 
   // Supported languages
-  static const List<String> supportedLanguages = ['tr', 'en', 'fi'];
+  static const List<String> supportedLanguages = ['tr', 'en', 'fi', 'fr'];
 
   // Notifier for app language changes
   static final ValueNotifier<String> appLanguageNotifier =
@@ -103,6 +103,8 @@ class LanguageService {
         return 'English';
       case 'fi':
         return 'Suomi';
+      case 'fr':
+        return 'Français';
       default:
         return languageCode;
     }
@@ -117,6 +119,8 @@ class LanguageService {
         return '🇬🇧';
       case 'fi':
         return '🇫🇮';
+      case 'fr':
+        return '🇫🇷';
       default:
         return '';
     }

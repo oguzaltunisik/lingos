@@ -7,22 +7,43 @@ class TermService {
   static List<Term>? _terms;
   static List<Topic>? _topics;
   static bool _isLoading = false;
+  static Map<String, Map<String, dynamic>>? _languageData;
 
-  // Load topics and terms from JSON file
+  // Load topics and terms from JSON files
   static Future<void> loadTerms() async {
     if (_isLoading || (_terms != null && _topics != null)) return;
 
     _isLoading = true;
     try {
-      final String response = await rootBundle.loadString(
+      // Load main content.json (id and emoji only)
+      final String contentResponse = await rootBundle.loadString(
         'assets/data/content.json',
       );
-      final Map<String, dynamic> data = json.decode(response);
-      final topicsJson = (data['topics'] as List?) ?? [];
-      final termsJson = (data['terms'] as List?) ?? [];
+      final Map<String, dynamic> contentData = json.decode(contentResponse);
+      final topicsJson = (contentData['topics'] as List?) ?? [];
+      final termsJson = (contentData['terms'] as List?) ?? [];
 
-      _topics = topicsJson.map((json) => Topic.fromJson(json)).toList();
-      _terms = termsJson.map((json) => Term.fromJson(json)).toList();
+      // Load language files
+      _languageData = {};
+      for (String lang in ['en', 'tr', 'fi', 'fr']) {
+        try {
+          final String langResponse = await rootBundle.loadString(
+            'assets/data/content_$lang.json',
+          );
+          _languageData![lang] = json.decode(langResponse);
+        } catch (e) {
+          // If language file doesn't exist, continue
+        }
+      }
+
+      // Create topics and terms with language data
+      _topics = topicsJson.map((json) {
+        return Topic.fromJson(json, _languageData);
+      }).toList();
+
+      _terms = termsJson.map((json) {
+        return Term.fromJson(json, _languageData);
+      }).toList();
     } catch (e) {
       _terms = [];
       _topics = [];
@@ -75,6 +96,8 @@ class TermService {
         return term.textTr;
       case 'fi':
         return term.textFi;
+      case 'fr':
+        return term.textFr;
       case 'en':
       default:
         return term.textEn;

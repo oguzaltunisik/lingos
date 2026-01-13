@@ -49,5 +49,12 @@
 	<string>Lingos needs microphone access to recognize your speech for language learning exercises.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Lingos needs speech recognition to convert your speech to text for language learning exercises.</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>tr</string>
+		<string>en</string>
+		<string>fi</string>
+		<string>fr</string>
+	</array>
 </dict>
 </plist>

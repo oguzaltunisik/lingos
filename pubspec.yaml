@@ -31,5 +31,9 @@ flutter:
 
   assets:
     - assets/data/content.json
+    - assets/data/content_en.json
+    - assets/data/content_tr.json
+    - assets/data/content_fi.json
+    - assets/data/content_fr.json
     - assets/sound_effects/correct.wav
     - assets/sound_effects/incorrect.mp3
