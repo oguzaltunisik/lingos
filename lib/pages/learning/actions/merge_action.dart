@@ -15,6 +15,7 @@ import 'package:lingos/widgets/question_card.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
 import 'package:lingos/utils/action_helpers.dart';
 import 'package:lingos/pages/learning/action_types.dart';
+import 'package:lingos/constants/card_colors.dart';
 
 class MergeAction extends StatefulWidget {
   const MergeAction({
@@ -292,7 +293,10 @@ class _MergeActionState extends State<MergeAction> {
                     opacity: _showTopCard ? 1.0 : 0.0,
                     duration: AppDurations.Durations.fadeAnimation,
                     child: widget.type == MergeActionType.audioToTarget
-                        ? AudioCard(term: widget.term)
+                        ? AudioCard(
+                            term: widget.term,
+                            targetLanguageCode: _targetLanguageCode ?? 'en',
+                          )
                         : widget.type == MergeActionType.questionToTarget
                         ? QuestionCard(
                             term: widget.term,
@@ -313,9 +317,11 @@ class _MergeActionState extends State<MergeAction> {
                             term: widget.term,
                             languageCode: _targetLanguageCode ?? 'en',
                             displayText: _builtText,
-                            overrideColor: _showFeedback
-                                ? (_isResultCorrect ? Colors.green : Colors.red)
-                                : null,
+                            colorStatus: _showFeedback
+                                ? (_isResultCorrect
+                                      ? CardColorStatus.correct
+                                      : CardColorStatus.incorrect)
+                                : CardColorStatus.deselected,
                             showIcon: false,
                             onTap: () {
                               setState(() {

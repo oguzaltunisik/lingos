@@ -178,6 +178,7 @@ class _TrueFalseActionState extends State<TrueFalseAction> {
       case TrueFalseActionType.audioToVisual:
         return AudioCard(
           term: widget.term,
+          targetLanguageCode: _targetLanguageCode ?? 'en',
           showBorder: true,
           onSelected: () => true, // Play TTS when tapped
         );
@@ -208,6 +209,7 @@ class _TrueFalseActionState extends State<TrueFalseAction> {
       case TrueFalseActionType.visualToAudio:
         return AudioCard(
           term: bottomTerm,
+          targetLanguageCode: _targetLanguageCode ?? 'en',
           showBorder: true,
           onSelected: () => true, // Play TTS when tapped
         );

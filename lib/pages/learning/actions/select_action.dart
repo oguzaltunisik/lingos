@@ -220,6 +220,7 @@ class _SelectActionState extends State<SelectAction> {
       case SelectActionType.audioToVisual:
         return AudioCard(
           term: widget.term,
+          targetLanguageCode: targetLang,
           onSelected: () {
             // Always play TTS when top card is tapped
             return true;

@@ -68,6 +68,7 @@ class AppLocalizations {
       _getString('actionSelectCorrectOption');
   String get actionBuildTerm => _getString('actionBuildTerm');
   String get actionTrueFalse => _getString('actionTrueFalse');
+  String get tapToType => _getString('tapToType');
 
   // Topics
   String getTopicName(String topicId) {
@@ -145,6 +146,7 @@ class AppLocalizations {
     'actionSelectCorrectOption': 'Make a selection',
     'actionBuildTerm': 'Build the term',
     'actionTrueFalse': 'True or False',
+    'tapToType': 'Tap to type',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -195,6 +197,7 @@ class AppLocalizations {
     'actionSelectCorrectOption': 'Seçim Yap',
     'actionBuildTerm': 'Terimi Oluştur',
     'actionTrueFalse': 'Doğru mu Yanlış mı',
+    'tapToType': 'Yazmak için dokun',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -246,6 +249,7 @@ class AppLocalizations {
     'actionSelectCorrectOption': 'Tee valinta',
     'actionBuildTerm': 'Rakenna termi',
     'actionTrueFalse': 'Totta vai Tarua',
+    'tapToType': 'Napauta kirjoittaaksesi',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -298,6 +302,7 @@ class AppLocalizations {
     'actionSelectCorrectOption': 'Faire une sélection',
     'actionBuildTerm': 'Construire le terme',
     'actionTrueFalse': 'Vrai ou Faux',
+    'tapToType': 'Appuyez pour taper',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',

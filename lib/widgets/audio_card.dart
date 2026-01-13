@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:lingos/models/term.dart';
-import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/tts_service.dart';
+import 'package:lingos/constants/card_colors.dart';
 
 class AudioCard extends StatelessWidget {
   const AudioCard({
     super.key,
     required this.term,
+    required this.targetLanguageCode,
     this.onSelected,
-    this.overrideColor,
+    this.colorStatus = CardColorStatus.deselected,
     this.showBorder = false,
   });
 
   final Term term;
+  final String targetLanguageCode;
   final bool Function()? onSelected; // Returns true if should play TTS
-  final Color? overrideColor;
+  final CardColorStatus colorStatus;
   final bool showBorder;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final primary = overrideColor ?? scheme.primary;
-    final onPrimary = scheme.onPrimary;
-    final bgColor = overrideColor ?? Colors.transparent;
-    final iconColor = overrideColor != null ? onPrimary : primary;
+    final primary = colorStatus.getColor(context);
+    final bgColor = colorStatus.getBackgroundColor(context);
+    final iconColor = colorStatus.getTextColor(context);
 
     return Material(
       color: Colors.transparent,
@@ -33,15 +33,12 @@ class AudioCard extends StatelessWidget {
           final shouldPlayTts = onSelected?.call() ?? false;
           // Play TTS only if selection was made (not deselected)
           if (shouldPlayTts) {
-            final targetLang = await LanguageService.getTargetLanguage();
-            if (targetLang != null) {
-              final text = term.getText(targetLang);
-              if (text.isNotEmpty) {
-                await TtsService.speakTerm(
-                  text: text,
-                  languageCode: targetLang,
-                );
-              }
+            final text = term.getText(targetLanguageCode);
+            if (text.isNotEmpty) {
+              await TtsService.speakTerm(
+                text: text,
+                languageCode: targetLanguageCode,
+              );
             }
           }
         },

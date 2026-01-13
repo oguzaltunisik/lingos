@@ -3,6 +3,7 @@ import 'package:lingos/models/term.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/tts_service.dart';
 import 'package:lingos/widgets/mini_icon_button.dart';
+import 'package:lingos/constants/card_colors.dart';
 
 class VisualCard extends StatefulWidget {
   const VisualCard({
@@ -10,7 +11,7 @@ class VisualCard extends StatefulWidget {
     required this.term,
     this.translationInitiallyVisible = false,
     this.onTap,
-    this.overrideColor,
+    this.colorStatus = CardColorStatus.deselected,
     this.showIcon = true,
     this.showBorder = false,
   });
@@ -18,7 +19,7 @@ class VisualCard extends StatefulWidget {
   final Term term;
   final bool translationInitiallyVisible;
   final VoidCallback? onTap;
-  final Color? overrideColor;
+  final CardColorStatus colorStatus;
   final bool showIcon;
   final bool showBorder;
 
@@ -87,11 +88,9 @@ class _VisualCardState extends State<VisualCard> {
 
     final content = LayoutBuilder(
       builder: (context, constraints) {
-        final scheme = Theme.of(context).colorScheme;
-        final primary = widget.overrideColor ?? scheme.primary;
-        final onPrimary = scheme.onPrimary;
-        final bgColor = widget.overrideColor ?? Colors.transparent;
-        final fgColor = widget.overrideColor != null ? onPrimary : primary;
+        final primary = widget.colorStatus.getColor(context);
+        final bgColor = widget.colorStatus.getBackgroundColor(context);
+        final fgColor = widget.colorStatus.getTextColor(context);
 
         return Container(
           decoration: BoxDecoration(
@@ -161,9 +160,9 @@ class _VisualCardState extends State<VisualCard> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: widget.overrideColor != null
-                    ? Colors.white
-                    : Theme.of(context).colorScheme.primary,
+                color: widget.colorStatus == CardColorStatus.deselected
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.white,
               ),
             ),
           ),
@@ -182,9 +181,9 @@ class _VisualCardState extends State<VisualCard> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: widget.overrideColor != null
-                  ? Colors.white
-                  : Theme.of(context).colorScheme.primary,
+              color: widget.colorStatus == CardColorStatus.deselected
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.white,
             ),
           ),
         ),
@@ -193,9 +192,9 @@ class _VisualCardState extends State<VisualCard> {
           bottom: 12,
           child: MiniIconButton(
             icon: Icons.translate_rounded,
-            color: widget.overrideColor != null
-                ? Theme.of(context).colorScheme.onPrimary
-                : Theme.of(context).colorScheme.primary,
+            color: widget.colorStatus == CardColorStatus.deselected
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onPrimary,
             onPressed: _isSpeaking ? null : _speakAndShowTranslation,
           ),
         ),

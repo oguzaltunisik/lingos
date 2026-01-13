@@ -3,6 +3,7 @@ import 'package:lingos/models/term.dart';
 import 'package:lingos/models/selection_option.dart';
 import 'package:lingos/widgets/visual_card.dart';
 import 'package:lingos/widgets/target_card.dart';
+import 'package:lingos/constants/card_colors.dart';
 
 class OptionsCard extends StatelessWidget {
   const OptionsCard({
@@ -37,13 +38,19 @@ class OptionsCard extends StatelessWidget {
   Widget _buildOption(BuildContext context, SelectionOption item, int index) {
     final VoidCallback? onTap = showFeedback ? null : () => onSelect(index);
     final applyHighlight = showFeedback && highlightedIndex == index;
-    final Color? overrideColor = applyHighlight ? highlightColor : null;
+    final CardColorStatus colorStatus = applyHighlight
+        ? (highlightColor == Colors.green
+              ? CardColorStatus.correct
+              : highlightColor == Colors.red
+              ? CardColorStatus.incorrect
+              : CardColorStatus.selected)
+        : CardColorStatus.deselected;
 
     if (isVisual && item.term != null) {
       return VisualCard(
         term: item.term!,
         onTap: onTap,
-        overrideColor: overrideColor,
+        colorStatus: colorStatus,
         showBorder: true,
       );
     }
@@ -52,9 +59,8 @@ class OptionsCard extends StatelessWidget {
     if (isVisual) {
       final scheme = Theme.of(context).colorScheme;
       final primary = scheme.primary;
-      final onPrimary = scheme.onPrimary;
-      final bgColor = overrideColor ?? Colors.transparent;
-      final textColor = overrideColor != null ? onPrimary : primary;
+      final bgColor = colorStatus.getBackgroundColor(context);
+      final textColor = colorStatus.getTextColor(context);
       return InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -100,7 +106,7 @@ class OptionsCard extends StatelessWidget {
         languageCode: item.languageCode ?? 'en',
         displayText: item.text,
         onTap: onTap,
-        overrideColor: overrideColor,
+        colorStatus: colorStatus,
         showBorder: true,
       );
     }
@@ -118,7 +124,7 @@ class OptionsCard extends StatelessWidget {
       languageCode: item.languageCode ?? 'en',
       displayText: item.text,
       onTap: onTap,
-      overrideColor: overrideColor,
+      colorStatus: colorStatus,
       showBorder: true,
     );
   }

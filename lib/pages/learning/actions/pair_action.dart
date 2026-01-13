@@ -9,6 +9,7 @@ import 'package:lingos/widgets/target_card.dart';
 import 'package:lingos/widgets/audio_card.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
 import 'package:lingos/pages/learning/action_types.dart';
+import 'package:lingos/constants/card_colors.dart';
 
 class PairAction extends StatefulWidget {
   const PairAction({
@@ -134,18 +135,24 @@ class _PairActionState extends State<PairAction> {
     if (isMatched) {
       return Opacity(
         opacity: 0,
-        child: IgnorePointer(child: _buildLeftCardContent(index)),
+        child: IgnorePointer(
+          child: _buildLeftCardContent(
+            index,
+            colorStatus: CardColorStatus.deselected,
+          ),
+        ),
       );
     }
 
-    Color? overrideColor;
+    CardColorStatus colorStatus;
     if (showRed) {
-      overrideColor = Colors.red;
+      colorStatus = CardColorStatus.incorrect;
     } else if (showGreen) {
-      overrideColor = Colors.green;
+      colorStatus = CardColorStatus.correct;
     } else if (isSelected) {
-      final scheme = Theme.of(context).colorScheme;
-      overrideColor = scheme.primary.withValues(alpha: 0.3);
+      colorStatus = CardColorStatus.selected;
+    } else {
+      colorStatus = CardColorStatus.deselected;
     }
 
     // For audio types, AudioCard handles its own tap, so don't wrap in GestureDetector
@@ -154,23 +161,26 @@ class _PairActionState extends State<PairAction> {
         widget.type == PairActionType.audioToVisual;
 
     if (isAudioType) {
-      return _buildLeftCardContent(index, overrideColor: overrideColor);
+      return _buildLeftCardContent(index, colorStatus: colorStatus);
     }
 
     return GestureDetector(
       onTap: () => _handleLeftTap(index),
-      child: _buildLeftCardContent(index, overrideColor: overrideColor),
+      child: _buildLeftCardContent(index, colorStatus: colorStatus),
     );
   }
 
-  Widget _buildLeftCardContent(int index, {Color? overrideColor}) {
+  Widget _buildLeftCardContent(
+    int index, {
+    required CardColorStatus colorStatus,
+  }) {
     final term = widget.terms[index];
 
     switch (widget.type) {
       case PairActionType.visualToTarget:
         return VisualCard(
           term: term,
-          overrideColor: overrideColor,
+          colorStatus: colorStatus,
           showIcon: false,
           showBorder: true,
         );
@@ -178,7 +188,8 @@ class _PairActionState extends State<PairAction> {
       case PairActionType.audioToVisual:
         return AudioCard(
           term: term,
-          overrideColor: overrideColor,
+          targetLanguageCode: _targetLanguageCode ?? 'en',
+          colorStatus: colorStatus,
           showBorder: true,
           onSelected: () {
             // Handle selection and play TTS
@@ -200,27 +211,34 @@ class _PairActionState extends State<PairAction> {
     if (isMatched) {
       return Opacity(
         opacity: 0,
-        child: IgnorePointer(child: _buildRightCardContent(originalIndex)),
+        child: IgnorePointer(
+          child: _buildRightCardContent(
+            originalIndex,
+            colorStatus: CardColorStatus.deselected,
+          ),
+        ),
       );
     }
 
-    Color? overrideColor;
+    CardColorStatus colorStatus;
     if (showRed) {
-      overrideColor = Colors.red;
+      colorStatus = CardColorStatus.incorrect;
     } else if (showGreen) {
-      overrideColor = Colors.green;
+      colorStatus = CardColorStatus.correct;
+    } else {
+      colorStatus = CardColorStatus.deselected;
     }
 
     return GestureDetector(
       onTap: () => _handleRightTap(rightIndex),
-      child: _buildRightCardContent(
-        originalIndex,
-        overrideColor: overrideColor,
-      ),
+      child: _buildRightCardContent(originalIndex, colorStatus: colorStatus),
     );
   }
 
-  Widget _buildRightCardContent(int index, {Color? overrideColor}) {
+  Widget _buildRightCardContent(
+    int index, {
+    required CardColorStatus colorStatus,
+  }) {
     final term = widget.terms[index];
     final targetLang = _targetLanguageCode ?? 'en';
 
@@ -230,14 +248,14 @@ class _PairActionState extends State<PairAction> {
         return TargetCard(
           languageCode: targetLang,
           term: term,
-          overrideColor: overrideColor,
+          colorStatus: colorStatus,
           showIcon: false,
           showBorder: true,
         );
       case PairActionType.audioToVisual:
         return VisualCard(
           term: term,
-          overrideColor: overrideColor,
+          colorStatus: colorStatus,
           showIcon: false,
           showBorder: true,
         );

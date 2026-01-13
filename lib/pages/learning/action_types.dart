@@ -1,13 +1,5 @@
 // Main learning flow action types
-enum LearningActionType {
-  display,
-  memory,
-  pair,
-  select,
-  trueFalse,
-  merge,
-  write,
-}
+enum LearningActionType { display, memory, pair, select, trueFalse, merge }
 
 // Element types used in actions
 // visual, audio, target, question
@@ -43,9 +35,6 @@ enum TrueFalseActionType {
 
 // Merge action types
 enum MergeActionType { audioToTarget, visualToTarget, questionToTarget }
-
-// Write action types
-enum WriteActionType { audioToTarget, visualToTarget }
 
 // Speak action types
 enum SpeakActionType { audioToTarget, visualToTarget, questionToTarget }

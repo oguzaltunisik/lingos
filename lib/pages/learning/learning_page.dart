@@ -13,7 +13,6 @@ import 'package:lingos/pages/learning/actions/pair_action.dart';
 import 'package:lingos/pages/learning/actions/select_action.dart';
 import 'package:lingos/pages/learning/actions/true_false_action.dart';
 import 'package:lingos/pages/learning/actions/merge_action.dart';
-import 'package:lingos/pages/learning/actions/write_action.dart';
 import 'package:lingos/pages/learning/action_types.dart';
 
 class LearningPage extends StatefulWidget {
@@ -243,16 +242,6 @@ class _LearningPageState extends State<LearningPage> {
               term: term,
               onNext: _nextStep,
               type: mergeTypes[randomIndex],
-            );
-            break;
-          case LearningActionType.write:
-            // Write action
-            final allWriteTypes = WriteActionType.values;
-            final randomIndex = _random.nextInt(allWriteTypes.length);
-            body = WriteAction(
-              term: term,
-              onNext: _nextStep,
-              type: allWriteTypes[randomIndex],
             );
             break;
         }

@@ -10,6 +10,7 @@ import 'package:lingos/widgets/audio_card.dart';
 import 'package:lingos/services/tts_service.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
 import 'package:lingos/pages/learning/action_types.dart';
+import 'package:lingos/constants/card_colors.dart';
 
 class MemoryAction extends StatefulWidget {
   const MemoryAction({
@@ -188,7 +189,7 @@ class _MemoryActionState extends State<MemoryAction> {
     final isChecking = _isChecking && (isFirstFlipped || isSecondFlipped);
 
     // Determine if this is a correct or wrong match during checking
-    Color? overrideColor;
+    CardColorStatus colorStatus;
     if (isChecking) {
       final firstTermIndex = _firstFlippedIndex != null
           ? _cardIndices[_firstFlippedIndex!]
@@ -208,14 +209,28 @@ class _MemoryActionState extends State<MemoryAction> {
           secondIsLeft != null) {
         final isMatch =
             firstTermIndex == secondTermIndex && firstIsLeft != secondIsLeft;
-        overrideColor = isMatch ? Colors.green : Colors.red;
+        colorStatus = isMatch
+            ? CardColorStatus.correct
+            : CardColorStatus.incorrect;
+      } else {
+        colorStatus = CardColorStatus.deselected;
       }
+    } else if (isFlipped) {
+      // Show primary color for flipped cards
+      colorStatus = CardColorStatus.selected;
+    } else {
+      colorStatus = CardColorStatus.deselected;
     }
 
     if (isMatched) {
       return Opacity(
         opacity: 0,
-        child: IgnorePointer(child: _buildCardContent(cardIndex)),
+        child: IgnorePointer(
+          child: _buildCardContent(
+            cardIndex,
+            colorStatus: CardColorStatus.deselected,
+          ),
+        ),
       );
     }
 
@@ -248,11 +263,14 @@ class _MemoryActionState extends State<MemoryAction> {
     // Card is face up
     return GestureDetector(
       onTap: () => _handleCardTap(cardIndex),
-      child: _buildCardContent(cardIndex, overrideColor: overrideColor),
+      child: _buildCardContent(cardIndex, colorStatus: colorStatus),
     );
   }
 
-  Widget _buildCardContent(int cardIndex, {Color? overrideColor}) {
+  Widget _buildCardContent(
+    int cardIndex, {
+    required CardColorStatus colorStatus,
+  }) {
     final termIndex = _cardIndices[cardIndex];
     final isLeft = _isLeftCard[cardIndex];
     final term = widget.terms[termIndex];
@@ -263,7 +281,7 @@ class _MemoryActionState extends State<MemoryAction> {
         if (isLeft) {
           return VisualCard(
             term: term,
-            overrideColor: overrideColor,
+            colorStatus: colorStatus,
             showIcon: false,
             showBorder: true,
           );
@@ -271,7 +289,7 @@ class _MemoryActionState extends State<MemoryAction> {
           return TargetCard(
             languageCode: targetLang,
             term: term,
-            overrideColor: overrideColor,
+            colorStatus: colorStatus,
             showIcon: false,
             showBorder: true,
           );
@@ -280,7 +298,8 @@ class _MemoryActionState extends State<MemoryAction> {
         if (isLeft) {
           return AudioCard(
             term: term,
-            overrideColor: overrideColor,
+            targetLanguageCode: targetLang,
+            colorStatus: colorStatus,
             showBorder: true,
             onSelected: () => true, // Play TTS when tapped
           );
@@ -288,7 +307,7 @@ class _MemoryActionState extends State<MemoryAction> {
           return TargetCard(
             languageCode: targetLang,
             term: term,
-            overrideColor: overrideColor,
+            colorStatus: colorStatus,
             showIcon: false,
             showBorder: true,
           );
@@ -297,14 +316,15 @@ class _MemoryActionState extends State<MemoryAction> {
         if (isLeft) {
           return AudioCard(
             term: term,
-            overrideColor: overrideColor,
+            targetLanguageCode: targetLang,
+            colorStatus: colorStatus,
             showBorder: true,
             onSelected: () => true, // Play TTS when tapped
           );
         } else {
           return VisualCard(
             term: term,
-            overrideColor: overrideColor,
+            colorStatus: colorStatus,
             showIcon: false,
             showBorder: true,
           );

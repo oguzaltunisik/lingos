@@ -14,6 +14,7 @@ import 'package:lingos/widgets/speak_card.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
 import 'package:lingos/utils/action_helpers.dart';
 import 'package:lingos/pages/learning/action_types.dart';
+import 'package:lingos/constants/card_colors.dart';
 
 class SpeakAction extends StatefulWidget {
   const SpeakAction({
@@ -367,6 +368,7 @@ class _SpeakActionState extends State<SpeakAction> {
                     child: widget.type == SpeakActionType.audioToTarget
                         ? AudioCard(
                             term: widget.term,
+                            targetLanguageCode: _targetLanguageCode ?? 'en',
                             onSelected: () {
                               // Always play TTS when audio card is tapped
                               return true;
@@ -392,9 +394,11 @@ class _SpeakActionState extends State<SpeakAction> {
                             term: widget.term,
                             languageCode: _targetLanguageCode ?? 'en',
                             displayText: _spokenText,
-                            overrideColor: _showFeedback
-                                ? (_isResultCorrect ? Colors.green : Colors.red)
-                                : null,
+                            colorStatus: _showFeedback
+                                ? (_isResultCorrect
+                                      ? CardColorStatus.correct
+                                      : CardColorStatus.incorrect)
+                                : CardColorStatus.deselected,
                             onTap: () {
                               setState(() {
                                 _spokenText = '';

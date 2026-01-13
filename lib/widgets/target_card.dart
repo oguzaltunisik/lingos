@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/tts_service.dart';
 import 'package:lingos/widgets/mini_icon_button.dart';
+import 'package:lingos/constants/card_colors.dart';
 
 class TargetCard extends StatefulWidget {
   const TargetCard({
@@ -10,7 +11,7 @@ class TargetCard extends StatefulWidget {
     required this.languageCode,
     this.displayText,
     this.onTap,
-    this.overrideColor,
+    this.colorStatus = CardColorStatus.deselected,
     this.showIcon = true,
     this.showBorder = false,
   });
@@ -20,7 +21,7 @@ class TargetCard extends StatefulWidget {
   final String?
   displayText; // Override text if needed (e.g., for merge/speak actions)
   final VoidCallback? onTap;
-  final Color? overrideColor;
+  final CardColorStatus colorStatus;
   final bool showIcon;
   final bool showBorder;
 
@@ -54,11 +55,10 @@ class _TargetCardState extends State<TargetCard> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        final primary = widget.colorStatus.getColor(context);
+        final bgColor = widget.colorStatus.getBackgroundColor(context);
+        final fgColor = widget.colorStatus.getTextColor(context);
         final scheme = Theme.of(context).colorScheme;
-        final primary = widget.overrideColor ?? scheme.primary;
-        final onPrimary = scheme.onPrimary;
-        final bgColor = widget.overrideColor ?? Colors.transparent;
-        final fgColor = widget.overrideColor != null ? onPrimary : primary;
         return Material(
           color: Colors.transparent,
           child: InkWell(
@@ -103,9 +103,9 @@ class _TargetCardState extends State<TargetCard> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: widget.overrideColor != null
-                          ? Colors.white
-                          : primary,
+                      color: widget.colorStatus == CardColorStatus.deselected
+                          ? primary
+                          : Colors.white,
                     ),
                   ),
                 ),
@@ -115,7 +115,9 @@ class _TargetCardState extends State<TargetCard> {
                     bottom: 12,
                     child: MiniIconButton(
                       icon: Icons.volume_up_rounded,
-                      color: widget.overrideColor != null ? onPrimary : primary,
+                      color: widget.colorStatus == CardColorStatus.deselected
+                          ? primary
+                          : scheme.onPrimary,
                       onPressed: () async {
                         final text = widget._displayText;
                         if (text.isEmpty) return;
