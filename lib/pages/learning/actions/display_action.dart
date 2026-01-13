@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
@@ -8,20 +7,17 @@ import 'package:lingos/widgets/action_button.dart';
 import 'package:lingos/widgets/visual_card.dart';
 import 'package:lingos/widgets/target_card.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
-
-enum DisplayMode { meet, remember }
+import 'package:lingos/pages/learning/action_types.dart';
 
 class DisplayAction extends StatefulWidget {
   const DisplayAction({
     super.key,
-    required this.topic,
     required this.term,
     required this.onNext,
     required this.mode,
     this.titleOverride,
   });
 
-  final Topic topic;
   final Term term;
   final VoidCallback onNext;
   final DisplayMode mode;
@@ -169,7 +165,6 @@ class _DisplayActionState extends State<DisplayAction> {
 
   @override
   Widget build(BuildContext context) {
-    final topic = widget.topic;
     final term = widget.term;
     final onNext = widget.onNext;
     final actionTitle =
@@ -203,7 +198,6 @@ class _DisplayActionState extends State<DisplayAction> {
                     child: _showNative
                         ? VisualCard(
                             term: term,
-                            topic: topic,
                             showIcon: widget.mode != DisplayMode.remember,
                           )
                         : const SizedBox.shrink(),
@@ -215,9 +209,8 @@ class _DisplayActionState extends State<DisplayAction> {
                       opacity: _showTarget ? 1.0 : 0.0,
                       duration: AppDurations.Durations.fadeAnimation,
                       child: TargetCard(
-                        topic: topic,
-                        targetText: term.getText(targetLanguageCode),
                         languageCode: targetLanguageCode,
+                        term: term,
                         showIcon: widget.mode != DisplayMode.remember,
                       ),
                     ),

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 
 class MergeCard extends StatelessWidget {
   const MergeCard({
     super.key,
-    required this.topic,
     required this.term,
     required this.targetLanguageCode,
     required this.chunks,
@@ -14,7 +12,6 @@ class MergeCard extends StatelessWidget {
     required this.onToggle,
   });
 
-  final Topic topic;
   final Term term;
   final String targetLanguageCode;
   final List<String> chunks;

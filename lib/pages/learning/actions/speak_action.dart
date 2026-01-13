@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
@@ -14,19 +13,16 @@ import 'package:lingos/widgets/question_card.dart';
 import 'package:lingos/widgets/speak_card.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
 import 'package:lingos/utils/action_helpers.dart';
-
-enum SpeakActionType { audioToTarget, visualToTarget, questionToTarget }
+import 'package:lingos/pages/learning/action_types.dart';
 
 class SpeakAction extends StatefulWidget {
   const SpeakAction({
     super.key,
-    required this.topic,
     required this.term,
     required this.onNext,
     required this.type,
   });
 
-  final Topic topic;
   final Term term;
   final VoidCallback onNext;
   final SpeakActionType type;
@@ -326,7 +322,6 @@ class _SpeakActionState extends State<SpeakAction> {
 
   @override
   Widget build(BuildContext context) {
-    final topic = widget.topic;
     final loc = AppLocalizations.current;
     final title = _hasAnswered
         ? loc.actionRemember
@@ -340,7 +335,6 @@ class _SpeakActionState extends State<SpeakAction> {
 
     if (_hasAnswered) {
       return DisplayAction(
-        topic: topic,
         term: widget.term,
         onNext: widget.onNext,
         mode: DisplayMode.remember,
@@ -372,7 +366,6 @@ class _SpeakActionState extends State<SpeakAction> {
                     duration: AppDurations.Durations.fadeAnimation,
                     child: widget.type == SpeakActionType.audioToTarget
                         ? AudioCard(
-                            topic: topic,
                             term: widget.term,
                             onSelected: () {
                               // Always play TTS when audio card is tapped
@@ -381,11 +374,10 @@ class _SpeakActionState extends State<SpeakAction> {
                           )
                         : widget.type == SpeakActionType.questionToTarget
                         ? QuestionCard(
-                            topic: topic,
                             term: widget.term,
                             questionText: _cachedQuestion,
                           )
-                        : VisualCard(term: widget.term, topic: topic),
+                        : VisualCard(term: widget.term),
                   ),
                 ),
                 Expanded(
@@ -397,9 +389,9 @@ class _SpeakActionState extends State<SpeakAction> {
                       children: [
                         Expanded(
                           child: TargetCard(
-                            topic: topic,
-                            targetText: _spokenText,
+                            term: widget.term,
                             languageCode: _targetLanguageCode ?? 'en',
+                            displayText: _spokenText,
                             overrideColor: _showFeedback
                                 ? (_isResultCorrect ? Colors.green : Colors.red)
                                 : null,
@@ -412,7 +404,6 @@ class _SpeakActionState extends State<SpeakAction> {
                         ),
                         Expanded(
                           child: SpeakCard(
-                            topic: topic,
                             term: widget.term,
                             targetLanguageCode: _targetLanguageCode ?? 'en',
                             isRecording: _isRecording,

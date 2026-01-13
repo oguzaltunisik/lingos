@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/tts_service.dart';
@@ -9,7 +8,6 @@ class VisualCard extends StatefulWidget {
   const VisualCard({
     super.key,
     required this.term,
-    required this.topic,
     this.translationInitiallyVisible = false,
     this.onTap,
     this.overrideColor,
@@ -18,7 +16,6 @@ class VisualCard extends StatefulWidget {
   });
 
   final Term term;
-  final Topic topic;
   final bool translationInitiallyVisible;
   final VoidCallback? onTap;
   final Color? overrideColor;
@@ -34,12 +31,14 @@ class _VisualCardState extends State<VisualCard> {
   String? _nativeLanguageCode;
   int _flowId = 0;
   bool _isSpeaking = false;
+  int _level = 0;
 
   @override
   void initState() {
     super.initState();
     _showTranslation = widget.translationInitiallyVisible;
     _loadNativeLanguage();
+    _loadLevel();
   }
 
   Future<void> _loadNativeLanguage() async {
@@ -48,6 +47,15 @@ class _VisualCardState extends State<VisualCard> {
     setState(() {
       _nativeLanguageCode = native;
     });
+  }
+
+  Future<void> _loadLevel() async {
+    final level = await Term.getLevel(widget.term.id);
+    if (mounted) {
+      setState(() {
+        _level = level;
+      });
+    }
   }
 
   Future<void> _speakAndShowTranslation() async {
@@ -141,11 +149,45 @@ class _VisualCardState extends State<VisualCard> {
 
     if (translationText == null) return card;
 
-    if (!widget.showIcon) return card;
+    if (!widget.showIcon) {
+      return Stack(
+        children: [
+          card,
+          Positioned(
+            left: 12,
+            top: 12,
+            child: Text(
+              '$_level',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: widget.overrideColor != null
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
 
     return Stack(
       children: [
         card,
+        Positioned(
+          left: 12,
+          top: 12,
+          child: Text(
+            '$_level',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: widget.overrideColor != null
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ),
         Positioned(
           right: 12,
           bottom: 12,

@@ -14,6 +14,7 @@ import 'package:lingos/pages/learning/actions/select_action.dart';
 import 'package:lingos/pages/learning/actions/true_false_action.dart';
 import 'package:lingos/pages/learning/actions/merge_action.dart';
 import 'package:lingos/pages/learning/actions/write_action.dart';
+import 'package:lingos/pages/learning/action_types.dart';
 
 class LearningPage extends StatefulWidget {
   final Topic topic;
@@ -57,9 +58,7 @@ class _LearningPageState extends State<LearningPage> {
     return (_currentStep + 1) / _totalSteps;
   }
 
-  int get _totalSteps =>
-      _terms.length *
-      8; // meet, memory, pair, select, true/false, remember, merge, write
+  int get _totalSteps => _terms.length * LearningActionType.values.length;
 
   Term _getDistractorTerm(int correctIndex) {
     if (_terms.length < 2) return _terms[correctIndex];
@@ -77,7 +76,7 @@ class _LearningPageState extends State<LearningPage> {
       builder: (context, languageCode, child) {
         final isLoading = _terms.isEmpty;
         final currentTerm = (!isLoading && _currentStep < _totalSteps)
-            ? _terms[_currentStep ~/ 8]
+            ? _terms[_currentStep ~/ LearningActionType.values.length]
             : null;
         final scheme = Theme.of(context).colorScheme;
 
@@ -130,134 +129,132 @@ class _LearningPageState extends State<LearningPage> {
         if (_currentStep >= _totalSteps) {
           return Scaffold(
             appBar: appBar,
-            body: CompletedAction(
-              topic: widget.topic,
-              onHome: () => Navigator.of(context).pop(),
-            ),
+            body: CompletedAction(onHome: () => Navigator.of(context).pop()),
           );
         }
 
         final term = currentTerm!;
-        final stepMod = _currentStep % 8;
+        final actionType = LearningActionType
+            .values[_currentStep % LearningActionType.values.length];
         final hasQuestions =
             term.questions != null && term.questions!.isNotEmpty;
         Widget body;
-        if (stepMod == 0) {
-          // Meet action
-          body = DisplayAction(
-            topic: widget.topic,
-            term: term,
-            onNext: _nextStep,
-            mode: DisplayMode.meet,
-          );
-        } else if (stepMod == 1) {
-          // Memory action - use current term and 2 distractors
-          final memoryTerms = <Term>[term];
-          while (memoryTerms.length < 3) {
-            final distractor = _getDistractorTerm(_currentStep ~/ 8);
-            if (!memoryTerms.contains(distractor)) {
-              memoryTerms.add(distractor);
-            } else {
-              // If distractor is same, get another one
-              int candidate = _random.nextInt(_terms.length);
-              while (memoryTerms.contains(_terms[candidate])) {
-                candidate = _random.nextInt(_terms.length);
+        switch (actionType) {
+          case LearningActionType.display:
+            body = DisplayAction(
+              term: term,
+              onNext: _nextStep,
+              mode: DisplayMode.meet,
+            );
+            break;
+          case LearningActionType.memory:
+            // Memory action - use current term and 2 distractors
+            final memoryTerms = <Term>[term];
+            while (memoryTerms.length < 3) {
+              final distractor = _getDistractorTerm(
+                _currentStep ~/ LearningActionType.values.length,
+              );
+              if (!memoryTerms.contains(distractor)) {
+                memoryTerms.add(distractor);
+              } else {
+                // If distractor is same, get another one
+                int candidate = _random.nextInt(_terms.length);
+                while (memoryTerms.contains(_terms[candidate])) {
+                  candidate = _random.nextInt(_terms.length);
+                }
+                memoryTerms.add(_terms[candidate]);
               }
-              memoryTerms.add(_terms[candidate]);
             }
-          }
-          final allMemoryTypes = MemoryActionType.values;
-          final randomIndex = _random.nextInt(allMemoryTypes.length);
-          body = MemoryAction(
-            topic: widget.topic,
-            terms: memoryTerms,
-            onNext: _nextStep,
-            type: allMemoryTypes[randomIndex],
-          );
-        } else if (stepMod == 2) {
-          // Pair action - use current term and 2 distractors
-          final pairTerms = <Term>[term];
-          while (pairTerms.length < 3) {
-            final distractor = _getDistractorTerm(_currentStep ~/ 8);
-            if (!pairTerms.contains(distractor)) {
-              pairTerms.add(distractor);
-            } else {
-              // If distractor is same, get another one
-              int candidate = _random.nextInt(_terms.length);
-              while (pairTerms.contains(_terms[candidate])) {
-                candidate = _random.nextInt(_terms.length);
+            final allMemoryTypes = MemoryActionType.values;
+            final randomIndex = _random.nextInt(allMemoryTypes.length);
+            body = MemoryAction(
+              terms: memoryTerms,
+              onNext: _nextStep,
+              type: allMemoryTypes[randomIndex],
+            );
+            break;
+          case LearningActionType.pair:
+            // Pair action - use current term and 2 distractors
+            final pairTerms = <Term>[term];
+            while (pairTerms.length < 3) {
+              final distractor = _getDistractorTerm(
+                _currentStep ~/ LearningActionType.values.length,
+              );
+              if (!pairTerms.contains(distractor)) {
+                pairTerms.add(distractor);
+              } else {
+                // If distractor is same, get another one
+                int candidate = _random.nextInt(_terms.length);
+                while (pairTerms.contains(_terms[candidate])) {
+                  candidate = _random.nextInt(_terms.length);
+                }
+                pairTerms.add(_terms[candidate]);
               }
-              pairTerms.add(_terms[candidate]);
             }
-          }
-          final allPairTypes = PairActionType.values;
-          final randomIndex = _random.nextInt(allPairTypes.length);
-          body = PairAction(
-            topic: widget.topic,
-            terms: pairTerms,
-            onNext: _nextStep,
-            type: allPairTypes[randomIndex],
-          );
-        } else if (stepMod == 3) {
-          // Select action
-          final allSelectTypes = SelectActionType.values;
-          final selectTypes = hasQuestions
-              ? allSelectTypes
-              : allSelectTypes
-                    .where((t) => t != SelectActionType.questionToTarget)
-                    .toList();
-          final randomIndex = _random.nextInt(selectTypes.length);
-          body = SelectAction(
-            topic: widget.topic,
-            term: term,
-            distractorTerm: _getDistractorTerm(_currentStep ~/ 8),
-            onNext: _nextStep,
-            type: selectTypes[randomIndex],
-          );
-        } else if (stepMod == 4) {
-          // True/False action
-          final allTrueFalseTypes = TrueFalseActionType.values;
-          final randomIndex = _random.nextInt(allTrueFalseTypes.length);
-          body = TrueFalseAction(
-            topic: widget.topic,
-            term: term,
-            distractorTerm: _getDistractorTerm(_currentStep ~/ 8),
-            onNext: _nextStep,
-            type: allTrueFalseTypes[randomIndex],
-          );
-        } else if (stepMod == 5) {
-          // Remember action - show the term from true/false action
-          body = DisplayAction(
-            topic: widget.topic,
-            term: term,
-            onNext: _nextStep,
-            mode: DisplayMode.remember,
-          );
-        } else if (stepMod == 6) {
-          // Merge action
-          final allMergeTypes = MergeActionType.values;
-          final mergeTypes = hasQuestions
-              ? allMergeTypes
-              : allMergeTypes
-                    .where((t) => t != MergeActionType.questionToTarget)
-                    .toList();
-          final randomIndex = _random.nextInt(mergeTypes.length);
-          body = MergeAction(
-            topic: widget.topic,
-            term: term,
-            onNext: _nextStep,
-            type: mergeTypes[randomIndex],
-          );
-        } else {
-          // Write action
-          final allWriteTypes = WriteActionType.values;
-          final randomIndex = _random.nextInt(allWriteTypes.length);
-          body = WriteAction(
-            topic: widget.topic,
-            term: term,
-            onNext: _nextStep,
-            type: allWriteTypes[randomIndex],
-          );
+            final allPairTypes = PairActionType.values;
+            final randomIndex = _random.nextInt(allPairTypes.length);
+            body = PairAction(
+              terms: pairTerms,
+              onNext: _nextStep,
+              type: allPairTypes[randomIndex],
+            );
+            break;
+          case LearningActionType.select:
+            // Select action
+            final allSelectTypes = SelectActionType.values;
+            final selectTypes = hasQuestions
+                ? allSelectTypes
+                : allSelectTypes
+                      .where((t) => t != SelectActionType.questionToTarget)
+                      .toList();
+            final randomIndex = _random.nextInt(selectTypes.length);
+            body = SelectAction(
+              term: term,
+              distractorTerm: _getDistractorTerm(
+                _currentStep ~/ LearningActionType.values.length,
+              ),
+              onNext: _nextStep,
+              type: selectTypes[randomIndex],
+            );
+            break;
+          case LearningActionType.trueFalse:
+            // True/False action
+            final allTrueFalseTypes = TrueFalseActionType.values;
+            final randomIndex = _random.nextInt(allTrueFalseTypes.length);
+            body = TrueFalseAction(
+              term: term,
+              distractorTerm: _getDistractorTerm(
+                _currentStep ~/ LearningActionType.values.length,
+              ),
+              onNext: _nextStep,
+              type: allTrueFalseTypes[randomIndex],
+            );
+            break;
+          case LearningActionType.merge:
+            // Merge action
+            final allMergeTypes = MergeActionType.values;
+            final mergeTypes = hasQuestions
+                ? allMergeTypes
+                : allMergeTypes
+                      .where((t) => t != MergeActionType.questionToTarget)
+                      .toList();
+            final randomIndex = _random.nextInt(mergeTypes.length);
+            body = MergeAction(
+              term: term,
+              onNext: _nextStep,
+              type: mergeTypes[randomIndex],
+            );
+            break;
+          case LearningActionType.write:
+            // Write action
+            final allWriteTypes = WriteActionType.values;
+            final randomIndex = _random.nextInt(allWriteTypes.length);
+            body = WriteAction(
+              term: term,
+              onNext: _nextStep,
+              type: allWriteTypes[randomIndex],
+            );
+            break;
         }
 
         return Scaffold(appBar: appBar, body: body);

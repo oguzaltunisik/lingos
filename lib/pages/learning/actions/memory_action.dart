@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
@@ -10,19 +9,16 @@ import 'package:lingos/widgets/target_card.dart';
 import 'package:lingos/widgets/audio_card.dart';
 import 'package:lingos/services/tts_service.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
-
-enum MemoryActionType { visualToTarget, audioToTarget, audioToVisual }
+import 'package:lingos/pages/learning/action_types.dart';
 
 class MemoryAction extends StatefulWidget {
   const MemoryAction({
     super.key,
-    required this.topic,
     required this.terms,
     required this.onNext,
     required this.type,
   });
 
-  final Topic topic;
   final List<Term> terms;
   final VoidCallback onNext;
   final MemoryActionType type;
@@ -260,7 +256,6 @@ class _MemoryActionState extends State<MemoryAction> {
     final termIndex = _cardIndices[cardIndex];
     final isLeft = _isLeftCard[cardIndex];
     final term = widget.terms[termIndex];
-    final topic = widget.topic;
     final targetLang = _targetLanguageCode ?? 'en';
 
     switch (widget.type) {
@@ -268,16 +263,14 @@ class _MemoryActionState extends State<MemoryAction> {
         if (isLeft) {
           return VisualCard(
             term: term,
-            topic: topic,
             overrideColor: overrideColor,
             showIcon: false,
             showBorder: true,
           );
         } else {
           return TargetCard(
-            topic: topic,
-            targetText: term.getText(targetLang),
             languageCode: targetLang,
+            term: term,
             overrideColor: overrideColor,
             showIcon: false,
             showBorder: true,
@@ -286,7 +279,6 @@ class _MemoryActionState extends State<MemoryAction> {
       case MemoryActionType.audioToTarget:
         if (isLeft) {
           return AudioCard(
-            topic: topic,
             term: term,
             overrideColor: overrideColor,
             showBorder: true,
@@ -294,9 +286,8 @@ class _MemoryActionState extends State<MemoryAction> {
           );
         } else {
           return TargetCard(
-            topic: topic,
-            targetText: term.getText(targetLang),
             languageCode: targetLang,
+            term: term,
             overrideColor: overrideColor,
             showIcon: false,
             showBorder: true,
@@ -305,7 +296,6 @@ class _MemoryActionState extends State<MemoryAction> {
       case MemoryActionType.audioToVisual:
         if (isLeft) {
           return AudioCard(
-            topic: topic,
             term: term,
             overrideColor: overrideColor,
             showBorder: true,
@@ -314,7 +304,6 @@ class _MemoryActionState extends State<MemoryAction> {
         } else {
           return VisualCard(
             term: term,
-            topic: topic,
             overrideColor: overrideColor,
             showIcon: false,
             showBorder: true,

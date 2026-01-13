@@ -1,49 +1,76 @@
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
+import 'package:lingos/models/term.dart';
 import 'package:lingos/services/tts_service.dart';
 import 'package:lingos/widgets/mini_icon_button.dart';
 
-class TargetCard extends StatelessWidget {
+class TargetCard extends StatefulWidget {
   const TargetCard({
     super.key,
-    required this.topic,
-    required this.targetText,
+    required this.term,
     required this.languageCode,
+    this.displayText,
     this.onTap,
     this.overrideColor,
     this.showIcon = true,
     this.showBorder = false,
   });
 
-  final Topic topic;
-  final String targetText;
+  final Term term;
   final String languageCode;
+  final String?
+  displayText; // Override text if needed (e.g., for merge/speak actions)
   final VoidCallback? onTap;
   final Color? overrideColor;
   final bool showIcon;
   final bool showBorder;
+
+  String get _displayText {
+    return displayText ?? term.getText(languageCode);
+  }
+
+  @override
+  State<TargetCard> createState() => _TargetCardState();
+}
+
+class _TargetCardState extends State<TargetCard> {
+  int _level = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLevel();
+  }
+
+  Future<void> _loadLevel() async {
+    final level = await Term.getLevel(widget.term.id);
+    if (mounted) {
+      setState(() {
+        _level = level;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final scheme = Theme.of(context).colorScheme;
-        final primary = overrideColor ?? scheme.primary;
+        final primary = widget.overrideColor ?? scheme.primary;
         final onPrimary = scheme.onPrimary;
-        final bgColor = overrideColor ?? Colors.transparent;
-        final fgColor = overrideColor != null ? onPrimary : primary;
+        final bgColor = widget.overrideColor ?? Colors.transparent;
+        final fgColor = widget.overrideColor != null ? onPrimary : primary;
         return Material(
           color: Colors.transparent,
           child: InkWell(
             borderRadius: BorderRadius.circular(12),
-            onTap: onTap,
+            onTap: widget.onTap,
             child: Stack(
               children: [
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     color: bgColor,
-                    border: showBorder
+                    border: widget.showBorder
                         ? Border.all(
                             color: primary.withValues(alpha: 0.3),
                             width: 1,
@@ -56,7 +83,7 @@ class TargetCard extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          targetText,
+                          widget._displayText,
                           style: TextStyle(
                             fontSize: 48,
                             fontWeight: FontWeight.bold,
@@ -68,18 +95,33 @@ class TargetCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (showIcon)
+                Positioned(
+                  left: 12,
+                  top: 12,
+                  child: Text(
+                    '$_level',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: widget.overrideColor != null
+                          ? Colors.white
+                          : primary,
+                    ),
+                  ),
+                ),
+                if (widget.showIcon)
                   Positioned(
                     right: 12,
                     bottom: 12,
                     child: MiniIconButton(
                       icon: Icons.volume_up_rounded,
-                      color: overrideColor != null ? onPrimary : primary,
+                      color: widget.overrideColor != null ? onPrimary : primary,
                       onPressed: () async {
-                        if (targetText.isEmpty) return;
+                        final text = widget._displayText;
+                        if (text.isEmpty) return;
                         await TtsService.speakTerm(
-                          text: targetText,
-                          languageCode: languageCode,
+                          text: text,
+                          languageCode: widget.languageCode,
                         );
                       },
                     ),

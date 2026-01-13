@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
+import 'package:lingos/models/term.dart';
 import 'package:lingos/models/selection_option.dart';
 import 'package:lingos/widgets/visual_card.dart';
 import 'package:lingos/widgets/target_card.dart';
@@ -7,7 +7,6 @@ import 'package:lingos/widgets/target_card.dart';
 class OptionsCard extends StatelessWidget {
   const OptionsCard({
     super.key,
-    required this.topic,
     required this.options,
     required this.selectedIndex,
     required this.onSelect,
@@ -16,8 +15,6 @@ class OptionsCard extends StatelessWidget {
     this.highlightColor,
     this.showFeedback = false,
   });
-
-  final Topic topic;
   final List<SelectionOption> options;
   final int? selectedIndex;
   final ValueChanged<int> onSelect;
@@ -45,7 +42,6 @@ class OptionsCard extends StatelessWidget {
     if (isVisual && item.term != null) {
       return VisualCard(
         term: item.term!,
-        topic: topic,
         onTap: onTap,
         overrideColor: overrideColor,
         showBorder: true,
@@ -98,10 +94,29 @@ class OptionsCard extends StatelessWidget {
     }
 
     // Non-visual: show target term card with selection styling
+    if (item.term != null) {
+      return TargetCard(
+        term: item.term!,
+        languageCode: item.languageCode ?? 'en',
+        displayText: item.text,
+        onTap: onTap,
+        overrideColor: overrideColor,
+        showBorder: true,
+      );
+    }
+    // Fallback if term is not available (should not happen in normal flow)
     return TargetCard(
-      topic: topic,
-      targetText: item.text,
+      term: Term(
+        id: 'temp',
+        topicIds: [],
+        textEn: item.text,
+        textTr: item.text,
+        textFi: item.text,
+        textFr: item.text,
+        emoji: '',
+      ),
       languageCode: item.languageCode ?? 'en',
+      displayText: item.text,
       onTap: onTap,
       overrideColor: overrideColor,
       showBorder: true,

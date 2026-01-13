@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/tts_service.dart';
@@ -10,19 +9,16 @@ import 'package:lingos/widgets/audio_card.dart';
 import 'package:lingos/widgets/write_card.dart';
 import 'package:lingos/widgets/target_card.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
-
-enum WriteActionType { audioToTarget, visualToTarget }
+import 'package:lingos/pages/learning/action_types.dart';
 
 class WriteAction extends StatefulWidget {
   const WriteAction({
     super.key,
-    required this.topic,
     required this.term,
     required this.onNext,
     required this.type,
   });
 
-  final Topic topic;
   final Term term;
   final VoidCallback onNext;
   final WriteActionType type;
@@ -189,16 +185,8 @@ class _WriteActionState extends State<WriteAction> {
               opacity: _showTopCard ? 1.0 : 0.0,
               duration: AppDurations.Durations.fadeAnimation,
               child: widget.type == WriteActionType.audioToTarget
-                  ? AudioCard(
-                      topic: widget.topic,
-                      term: widget.term,
-                      showBorder: true,
-                    )
-                  : VisualCard(
-                      term: widget.term,
-                      topic: widget.topic,
-                      showBorder: true,
-                    ),
+                  ? AudioCard(term: widget.term, showBorder: true)
+                  : VisualCard(term: widget.term, showBorder: true),
             ),
           ),
         ),
@@ -211,23 +199,18 @@ class _WriteActionState extends State<WriteAction> {
               duration: AppDurations.Durations.fadeAnimation,
               child: _showFeedback && _isCorrect
                   ? TargetCard(
-                      topic: widget.topic,
-                      targetText: widget.term.getText(
-                        _targetLanguageCode ?? 'en',
-                      ),
                       languageCode: _targetLanguageCode ?? 'en',
+                      term: widget.term,
                       overrideColor: Colors.green,
                       showBorder: true,
                     )
                   : _showFeedback && !_isCorrect
                   ? WriteCard(
-                      topic: widget.topic,
                       text: _writtenText,
                       onTap: _openWriteBottomSheet,
                       showBorder: true,
                     )
                   : WriteCard(
-                      topic: widget.topic,
                       text: _writtenText,
                       onTap: _openWriteBottomSheet,
                       showBorder: true,

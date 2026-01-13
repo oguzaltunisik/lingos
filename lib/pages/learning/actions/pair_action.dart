@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
@@ -9,19 +8,16 @@ import 'package:lingos/widgets/visual_card.dart';
 import 'package:lingos/widgets/target_card.dart';
 import 'package:lingos/widgets/audio_card.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
-
-enum PairActionType { visualToTarget, audioToTarget, audioToVisual }
+import 'package:lingos/pages/learning/action_types.dart';
 
 class PairAction extends StatefulWidget {
   const PairAction({
     super.key,
-    required this.topic,
     required this.terms,
     required this.onNext,
     required this.type,
   });
 
-  final Topic topic;
   final List<Term> terms;
   final VoidCallback onNext;
   final PairActionType type;
@@ -169,13 +165,11 @@ class _PairActionState extends State<PairAction> {
 
   Widget _buildLeftCardContent(int index, {Color? overrideColor}) {
     final term = widget.terms[index];
-    final topic = widget.topic;
 
     switch (widget.type) {
       case PairActionType.visualToTarget:
         return VisualCard(
           term: term,
-          topic: topic,
           overrideColor: overrideColor,
           showIcon: false,
           showBorder: true,
@@ -183,7 +177,6 @@ class _PairActionState extends State<PairAction> {
       case PairActionType.audioToTarget:
       case PairActionType.audioToVisual:
         return AudioCard(
-          topic: topic,
           term: term,
           overrideColor: overrideColor,
           showBorder: true,
@@ -229,16 +222,14 @@ class _PairActionState extends State<PairAction> {
 
   Widget _buildRightCardContent(int index, {Color? overrideColor}) {
     final term = widget.terms[index];
-    final topic = widget.topic;
     final targetLang = _targetLanguageCode ?? 'en';
 
     switch (widget.type) {
       case PairActionType.visualToTarget:
       case PairActionType.audioToTarget:
         return TargetCard(
-          topic: topic,
-          targetText: term.getText(targetLang),
           languageCode: targetLang,
+          term: term,
           overrideColor: overrideColor,
           showIcon: false,
           showBorder: true,
@@ -246,7 +237,6 @@ class _PairActionState extends State<PairAction> {
       case PairActionType.audioToVisual:
         return VisualCard(
           term: term,
-          topic: topic,
           overrideColor: overrideColor,
           showIcon: false,
           showBorder: true,

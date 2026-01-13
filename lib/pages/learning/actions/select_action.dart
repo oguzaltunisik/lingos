@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/models/selection_option.dart';
 import 'package:lingos/services/app_localizations.dart';
@@ -14,26 +13,17 @@ import 'package:lingos/widgets/audio_card.dart';
 import 'package:lingos/widgets/question_card.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
 import 'package:lingos/utils/action_helpers.dart';
-
-enum SelectActionType {
-  audioToTarget,
-  audioToVisual,
-  visualToTarget,
-  targetToVisual,
-  questionToTarget,
-}
+import 'package:lingos/pages/learning/action_types.dart';
 
 class SelectAction extends StatefulWidget {
   const SelectAction({
     super.key,
-    required this.topic,
     required this.term,
     required this.distractorTerm,
     required this.onNext,
     required this.type,
   });
 
-  final Topic topic;
   final Term term;
   final Term distractorTerm;
   final VoidCallback onNext;
@@ -224,13 +214,11 @@ class _SelectActionState extends State<SelectAction> {
   }
 
   Widget _buildTopCard() {
-    final topic = widget.topic;
     final targetLang = _targetLanguageCode ?? 'en';
     switch (widget.type) {
       case SelectActionType.audioToTarget:
       case SelectActionType.audioToVisual:
         return AudioCard(
-          topic: topic,
           term: widget.term,
           onSelected: () {
             // Always play TTS when top card is tapped
@@ -238,30 +226,20 @@ class _SelectActionState extends State<SelectAction> {
           },
         );
       case SelectActionType.visualToTarget:
-        return VisualCard(term: widget.term, topic: topic);
+        return VisualCard(term: widget.term);
       case SelectActionType.targetToVisual:
-        return TargetCard(
-          topic: topic,
-          targetText: widget.term.getText(targetLang),
-          languageCode: targetLang,
-        );
+        return TargetCard(languageCode: targetLang, term: widget.term);
       case SelectActionType.questionToTarget:
-        return QuestionCard(
-          topic: topic,
-          term: widget.term,
-          questionText: _cachedQuestion,
-        );
+        return QuestionCard(term: widget.term, questionText: _cachedQuestion);
     }
   }
 
   Widget _buildOptions(AppLocalizations loc, Color? feedbackColor) {
-    final topic = widget.topic;
     final isVisual =
         widget.type == SelectActionType.targetToVisual ||
         widget.type == SelectActionType.audioToVisual;
 
     return OptionsCard(
-      topic: topic,
       isVisual: isVisual,
       options: _options,
       selectedIndex: _selectedIndex,
@@ -282,7 +260,6 @@ class _SelectActionState extends State<SelectAction> {
 
   @override
   Widget build(BuildContext context) {
-    final topic = widget.topic;
     final loc = AppLocalizations.current;
     final actionTitle = _hasAnswered ? loc.actionRemember : _title(loc);
     final Color? feedbackColor = _showFeedback && _selectedIndex != null
@@ -295,7 +272,6 @@ class _SelectActionState extends State<SelectAction> {
 
     if (_hasAnswered) {
       return DisplayAction(
-        topic: topic,
         term: widget.term,
         onNext: widget.onNext,
         mode: DisplayMode.remember,

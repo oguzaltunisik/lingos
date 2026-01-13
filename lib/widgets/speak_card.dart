@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 
 class SpeakCard extends StatelessWidget {
   const SpeakCard({
     super.key,
-    required this.topic,
     required this.term,
     required this.targetLanguageCode,
     required this.isRecording,
@@ -13,7 +11,6 @@ class SpeakCard extends StatelessWidget {
     required this.onRecordStop,
   });
 
-  final Topic topic;
   final Term term;
   final String targetLanguageCode;
   final bool isRecording;

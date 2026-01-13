@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/widgets/action_button.dart';
 
 class CompletedAction extends StatelessWidget {
-  const CompletedAction({super.key, required this.topic, required this.onHome});
+  const CompletedAction({super.key, required this.onHome});
 
-  final Topic topic;
   final VoidCallback onHome;
 
   @override

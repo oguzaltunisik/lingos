@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
@@ -11,25 +10,17 @@ import 'package:lingos/widgets/target_card.dart';
 import 'package:lingos/widgets/audio_card.dart';
 import 'package:lingos/widgets/true_false_card.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
-
-enum TrueFalseActionType {
-  audioToTarget,
-  visualToTarget,
-  audioToVisual,
-  visualToAudio,
-}
+import 'package:lingos/pages/learning/action_types.dart';
 
 class TrueFalseAction extends StatefulWidget {
   const TrueFalseAction({
     super.key,
-    required this.topic,
     required this.term,
     required this.distractorTerm,
     required this.onNext,
     required this.type,
   });
 
-  final Topic topic;
   final Term term;
   final Term distractorTerm;
   final VoidCallback onNext;
@@ -187,17 +178,12 @@ class _TrueFalseActionState extends State<TrueFalseAction> {
       case TrueFalseActionType.audioToVisual:
         return AudioCard(
           term: widget.term,
-          topic: widget.topic,
           showBorder: true,
           onSelected: () => true, // Play TTS when tapped
         );
       case TrueFalseActionType.visualToTarget:
       case TrueFalseActionType.visualToAudio:
-        return VisualCard(
-          term: widget.term,
-          topic: widget.topic,
-          showBorder: true,
-        );
+        return VisualCard(term: widget.term, showBorder: true);
     }
   }
 
@@ -212,22 +198,16 @@ class _TrueFalseActionState extends State<TrueFalseAction> {
       case TrueFalseActionType.audioToTarget:
       case TrueFalseActionType.visualToTarget:
         return TargetCard(
-          topic: widget.topic,
-          targetText: bottomTerm.getText(_targetLanguageCode!),
           languageCode: _targetLanguageCode!,
+          term: bottomTerm,
           showBorder: true,
           showIcon: false,
         );
       case TrueFalseActionType.audioToVisual:
-        return VisualCard(
-          term: bottomTerm,
-          topic: widget.topic,
-          showBorder: true,
-        );
+        return VisualCard(term: bottomTerm, showBorder: true);
       case TrueFalseActionType.visualToAudio:
         return AudioCard(
           term: bottomTerm,
-          topic: widget.topic,
           showBorder: true,
           onSelected: () => true, // Play TTS when tapped
         );

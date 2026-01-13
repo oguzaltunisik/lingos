@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Term {
   final String id;
@@ -10,6 +11,8 @@ class Term {
   final List<Map<String, String>>? questions;
   final String emoji;
   static final Random _random = Random();
+
+  static const String _levelKeyPrefix = 'term_level_';
 
   const Term({
     required this.id,
@@ -120,5 +123,27 @@ class Term {
       result['questions'] = questions;
     }
     return result;
+  }
+
+  // Get learning level from SharedPreferences
+  static Future<int> getLevel(String termId) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('$_levelKeyPrefix$termId') ?? 0;
+  }
+
+  // Set learning level in SharedPreferences
+  static Future<void> setLevel(String termId, int level) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('$_levelKeyPrefix$termId', level);
+  }
+
+  // Get level for this term instance
+  Future<int> getLearningLevel() async {
+    return await getLevel(id);
+  }
+
+  // Set level for this term instance
+  Future<void> setLearningLevel(int level) async {
+    await setLevel(id, level);
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
@@ -15,19 +14,16 @@ import 'package:lingos/widgets/target_card.dart';
 import 'package:lingos/widgets/question_card.dart';
 import 'package:lingos/constants/durations.dart' as AppDurations;
 import 'package:lingos/utils/action_helpers.dart';
-
-enum MergeActionType { audioToTarget, visualToTarget, questionToTarget }
+import 'package:lingos/pages/learning/action_types.dart';
 
 class MergeAction extends StatefulWidget {
   const MergeAction({
     super.key,
-    required this.topic,
     required this.term,
     required this.onNext,
     required this.type,
   });
 
-  final Topic topic;
   final Term term;
   final VoidCallback onNext;
   final MergeActionType type;
@@ -258,7 +254,6 @@ class _MergeActionState extends State<MergeAction> {
 
   @override
   Widget build(BuildContext context) {
-    final topic = widget.topic;
     final loc = AppLocalizations.current;
     final title = _hasAnswered ? loc.actionRemember : loc.actionBuildTerm;
 
@@ -266,7 +261,6 @@ class _MergeActionState extends State<MergeAction> {
 
     if (_hasAnswered) {
       return DisplayAction(
-        topic: topic,
         term: widget.term,
         onNext: widget.onNext,
         mode: DisplayMode.remember,
@@ -298,14 +292,13 @@ class _MergeActionState extends State<MergeAction> {
                     opacity: _showTopCard ? 1.0 : 0.0,
                     duration: AppDurations.Durations.fadeAnimation,
                     child: widget.type == MergeActionType.audioToTarget
-                        ? AudioCard(topic: topic, term: widget.term)
+                        ? AudioCard(term: widget.term)
                         : widget.type == MergeActionType.questionToTarget
                         ? QuestionCard(
-                            topic: topic,
                             term: widget.term,
                             questionText: _cachedQuestion,
                           )
-                        : VisualCard(term: widget.term, topic: topic),
+                        : VisualCard(term: widget.term),
                   ),
                 ),
                 Expanded(
@@ -317,9 +310,9 @@ class _MergeActionState extends State<MergeAction> {
                       children: [
                         Expanded(
                           child: TargetCard(
-                            topic: topic,
-                            targetText: _builtText,
+                            term: widget.term,
                             languageCode: _targetLanguageCode ?? 'en',
+                            displayText: _builtText,
                             overrideColor: _showFeedback
                                 ? (_isResultCorrect ? Colors.green : Colors.red)
                                 : null,
@@ -333,7 +326,6 @@ class _MergeActionState extends State<MergeAction> {
                         ),
                         Expanded(
                           child: MergeCard(
-                            topic: topic,
                             term: widget.term,
                             targetLanguageCode: _targetLanguageCode ?? 'en',
                             chunks: _chunks,

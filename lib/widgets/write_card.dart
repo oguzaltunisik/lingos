@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
 
 class WriteCard extends StatelessWidget {
   const WriteCard({
     super.key,
-    required this.topic,
     required this.onTap,
     this.text,
     this.showBorder = false,
   });
 
-  final Topic topic;
   final VoidCallback onTap;
   final String? text;
   final bool showBorder;

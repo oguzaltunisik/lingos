@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/tts_service.dart';
@@ -7,14 +6,12 @@ import 'package:lingos/services/tts_service.dart';
 class AudioCard extends StatelessWidget {
   const AudioCard({
     super.key,
-    required this.topic,
     required this.term,
     this.onSelected,
     this.overrideColor,
     this.showBorder = false,
   });
 
-  final Topic topic;
   final Term term;
   final bool Function()? onSelected; // Returns true if should play TTS
   final Color? overrideColor;
@@ -54,10 +51,7 @@ class AudioCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             color: bgColor,
             border: showBorder
-                ? Border.all(
-                    color: primary.withValues(alpha: 0.3),
-                    width: 1,
-                  )
+                ? Border.all(color: primary.withValues(alpha: 0.3), width: 1)
                 : null,
           ),
           child: Center(

@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lingos/models/topic.dart';
 import 'package:lingos/models/term.dart';
 import 'package:lingos/services/language_service.dart';
 
 class QuestionCard extends StatefulWidget {
-  const QuestionCard({
-    super.key,
-    required this.topic,
-    required this.term,
-    this.questionText,
-  });
+  const QuestionCard({super.key, required this.term, this.questionText});
 
-  final Topic topic;
   final Term term;
   final String? questionText;
 
