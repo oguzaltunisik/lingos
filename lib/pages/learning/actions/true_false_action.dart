@@ -40,6 +40,7 @@ class _TrueFalseActionState extends State<TrueFalseAction> {
   bool _isCompatible = false; // Whether top and bottom cards match
   String? _targetLanguageCode;
   int _flowId = 0;
+  bool _isFirstAttempt = true; // Track if this is the first attempt
 
   @override
   void initState() {
@@ -86,6 +87,7 @@ class _TrueFalseActionState extends State<TrueFalseAction> {
       _showTopCard = false;
       _showBottomCard = false;
       _selectedValue = null;
+      _isFirstAttempt = true; // Reset first attempt flag
     });
 
     // Show top card
@@ -137,8 +139,6 @@ class _TrueFalseActionState extends State<TrueFalseAction> {
     // If compatible: true is correct
     // If not compatible: false is correct
     final isCorrect = _isCompatible ? value == true : value == false;
-    final isFirstAttempt =
-        _selectedValue == null; // First attempt if nothing selected yet
 
     setState(() {
       _selectedValue = value;
@@ -156,7 +156,7 @@ class _TrueFalseActionState extends State<TrueFalseAction> {
           _hasAnswered = true;
         });
         // Increase level only on first attempt success
-        if (isFirstAttempt) {
+        if (_isFirstAttempt) {
           widget.term.incrementLearningLevel();
         }
         widget.onNext();
@@ -164,6 +164,9 @@ class _TrueFalseActionState extends State<TrueFalseAction> {
     } else {
       // Incorrect: play sound, show red, then reset for retry
       SoundService.playIncorrect();
+      setState(() {
+        _isFirstAttempt = false; // Mark that first attempt failed
+      });
       Future.delayed(AppDurations.Durations.feedbackDisplay, () {
         if (!mounted) return;
         setState(() {
