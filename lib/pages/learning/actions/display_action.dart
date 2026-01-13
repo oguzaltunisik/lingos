@@ -224,12 +224,26 @@ class _DisplayActionState extends State<DisplayAction> {
               children: [
                 ActionButton(
                   label: AppLocalizations.current.alreadyKnowButton,
-                  onPressed: _canProceed ? onNext : null,
+                  onPressed: _canProceed
+                      ? () async {
+                          // Increase level by 2 for "already know"
+                          final currentLevel = await widget.term
+                              .getLearningLevel();
+                          await widget.term.setLearningLevel(currentLevel + 2);
+                          onNext();
+                        }
+                      : null,
                   outlined: true,
                 ),
                 ActionButton(
                   label: AppLocalizations.current.wantToLearnButton,
-                  onPressed: _canProceed ? onNext : null,
+                  onPressed: _canProceed
+                      ? () async {
+                          // Increase level by 1 for "want to learn"
+                          widget.term.incrementLearningLevel();
+                          onNext();
+                        }
+                      : null,
                 ),
               ],
             ),

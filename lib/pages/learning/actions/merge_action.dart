@@ -6,7 +6,6 @@ import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/tts_service.dart';
 import 'package:lingos/services/sound_service.dart';
-import 'package:lingos/pages/learning/actions/display_action.dart';
 import 'package:lingos/widgets/visual_card.dart';
 import 'package:lingos/widgets/audio_card.dart';
 import 'package:lingos/widgets/merge_card.dart';
@@ -256,17 +255,21 @@ class _MergeActionState extends State<MergeAction> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.current;
-    final title = _hasAnswered ? loc.actionRemember : loc.actionBuildTerm;
+    final title = loc.actionBuildTerm;
 
     if (_targetText.isEmpty) return const SizedBox.shrink();
 
     if (_hasAnswered) {
-      return DisplayAction(
-        term: widget.term,
-        onNext: widget.onNext,
-        mode: DisplayMode.remember,
-        titleOverride: title,
-      );
+      // Proceed to next step (remember will be shown by LearningPage).
+      // Call onNext after the current frame to avoid setState during build.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          // Increase level only on successful completion
+          widget.term.incrementLearningLevel();
+          widget.onNext();
+        }
+      });
+      return const SizedBox.shrink();
     }
 
     return Padding(

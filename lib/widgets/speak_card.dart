@@ -40,20 +40,22 @@ class SpeakCard extends StatelessWidget {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 16,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 8,
           children: [
             Icon(
               isRecording ? Icons.mic : Icons.mic_none,
-              size: 48,
+              size: 40,
               color: isRecording ? Colors.red : primary,
             ),
             Text(
               isRecording ? 'Konuş...' : 'Basılı tut ve konuş',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: isRecording ? Colors.red : primary,
               ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),

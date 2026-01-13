@@ -161,6 +161,10 @@ class _MemoryActionState extends State<MemoryAction> {
         if (_matchedPairs.length == 6) {
           Future.delayed(AppDurations.Durations.fadeOutDelay, () {
             if (!mounted) return;
+            // Increase level only on successful completion (primary term is first)
+            if (widget.terms.isNotEmpty) {
+              widget.terms.first.incrementLearningLevel();
+            }
             widget.onNext();
           });
         }

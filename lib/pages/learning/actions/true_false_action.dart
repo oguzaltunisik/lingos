@@ -153,6 +153,8 @@ class _TrueFalseActionState extends State<TrueFalseAction> {
         setState(() {
           _hasAnswered = true;
         });
+        // Increase level only on successful completion
+        widget.term.incrementLearningLevel();
         widget.onNext();
       });
     } else {

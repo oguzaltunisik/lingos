@@ -101,6 +101,10 @@ class _PairActionState extends State<PairAction> {
         if (_matchedPairs.length == 3) {
           Future.delayed(AppDurations.Durations.fadeOutDelay, () {
             if (!mounted) return;
+            // Increase level only on successful completion (primary term is first)
+            if (widget.terms.isNotEmpty) {
+              widget.terms.first.incrementLearningLevel();
+            }
             widget.onNext();
           });
         }

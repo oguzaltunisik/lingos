@@ -13,6 +13,7 @@ import 'package:lingos/pages/learning/actions/pair_action.dart';
 import 'package:lingos/pages/learning/actions/select_action.dart';
 import 'package:lingos/pages/learning/actions/true_false_action.dart';
 import 'package:lingos/pages/learning/actions/merge_action.dart';
+import 'package:lingos/pages/learning/actions/speak_action.dart';
 import 'package:lingos/pages/learning/action_types.dart';
 
 class LearningPage extends StatefulWidget {
@@ -57,7 +58,61 @@ class _LearningPageState extends State<LearningPage> {
     return (_currentStep + 1) / _totalSteps;
   }
 
-  int get _totalSteps => _terms.length * LearningActionType.values.length;
+  // Single-term actions that should show remember after completion
+  static const List<LearningActionType> _singleTermActions = [
+    LearningActionType.display,
+    LearningActionType.select,
+    LearningActionType.trueFalse,
+    LearningActionType.merge,
+    LearningActionType.speak,
+  ];
+
+  // Multi-term actions that don't show remember
+  static const List<LearningActionType> _multiTermActions = [
+    LearningActionType.pair,
+    LearningActionType.memory,
+  ];
+
+  // Calculate total steps: each term has single-term actions + remember steps + multi-term actions
+  int get _totalSteps {
+    // Each term: 5 single-term actions + 5 remember steps + 2 multi-term actions = 12 steps
+    return _terms.length *
+        (_singleTermActions.length * 2 + _multiTermActions.length);
+  }
+
+  // Get the current action type and whether we should show remember
+  (LearningActionType?, bool) _getActionTypeAndRemember(int step) {
+    final stepsPerTerm =
+        _singleTermActions.length * 2 + _multiTermActions.length;
+    final termIndex = step ~/ stepsPerTerm;
+    final stepInTerm = step % stepsPerTerm;
+
+    if (termIndex >= _terms.length) {
+      return (null, false);
+    }
+
+    int currentStep = 0;
+
+    // Process single-term actions with remember
+    for (final action in _singleTermActions) {
+      if (currentStep == stepInTerm) {
+        return (action, false); // Action step
+      }
+      currentStep++;
+      if (currentStep == stepInTerm) {
+        return (action, true); // Remember step after action
+      }
+      currentStep++;
+    }
+
+    // Process multi-term actions (no remember)
+    final multiTermStep = stepInTerm - (_singleTermActions.length * 2);
+    if (multiTermStep >= 0 && multiTermStep < _multiTermActions.length) {
+      return (_multiTermActions[multiTermStep], false);
+    }
+
+    return (null, false);
+  }
 
   Term _getDistractorTerm(int correctIndex) {
     if (_terms.length < 2) return _terms[correctIndex];
@@ -74,8 +129,10 @@ class _LearningPageState extends State<LearningPage> {
       valueListenable: LanguageService.appLanguageNotifier,
       builder: (context, languageCode, child) {
         final isLoading = _terms.isEmpty;
+        final stepsPerTerm =
+            _singleTermActions.length * 2 + _multiTermActions.length;
         final currentTerm = (!isLoading && _currentStep < _totalSteps)
-            ? _terms[_currentStep ~/ LearningActionType.values.length]
+            ? _terms[_currentStep ~/ stepsPerTerm]
             : null;
         final scheme = Theme.of(context).colorScheme;
 
@@ -133,8 +190,24 @@ class _LearningPageState extends State<LearningPage> {
         }
 
         final term = currentTerm!;
-        final actionType = LearningActionType
-            .values[_currentStep % LearningActionType.values.length];
+        final (actionType, showRemember) = _getActionTypeAndRemember(
+          _currentStep,
+        );
+
+        if (actionType == null) {
+          return Scaffold(appBar: appBar, body: const SizedBox.shrink());
+        }
+
+        // If this is a remember step, show DisplayAction in remember mode
+        if (showRemember) {
+          Widget body = DisplayAction(
+            term: term,
+            onNext: _nextStep,
+            mode: DisplayMode.remember,
+          );
+          return Scaffold(appBar: appBar, body: body);
+        }
+
         final hasQuestions =
             term.questions != null && term.questions!.isNotEmpty;
         Widget body;
@@ -151,7 +224,7 @@ class _LearningPageState extends State<LearningPage> {
             final memoryTerms = <Term>[term];
             while (memoryTerms.length < 3) {
               final distractor = _getDistractorTerm(
-                _currentStep ~/ LearningActionType.values.length,
+                _currentStep ~/ stepsPerTerm,
               );
               if (!memoryTerms.contains(distractor)) {
                 memoryTerms.add(distractor);
@@ -177,7 +250,7 @@ class _LearningPageState extends State<LearningPage> {
             final pairTerms = <Term>[term];
             while (pairTerms.length < 3) {
               final distractor = _getDistractorTerm(
-                _currentStep ~/ LearningActionType.values.length,
+                _currentStep ~/ stepsPerTerm,
               );
               if (!pairTerms.contains(distractor)) {
                 pairTerms.add(distractor);
@@ -209,9 +282,7 @@ class _LearningPageState extends State<LearningPage> {
             final randomIndex = _random.nextInt(selectTypes.length);
             body = SelectAction(
               term: term,
-              distractorTerm: _getDistractorTerm(
-                _currentStep ~/ LearningActionType.values.length,
-              ),
+              distractorTerm: _getDistractorTerm(_currentStep ~/ stepsPerTerm),
               onNext: _nextStep,
               type: selectTypes[randomIndex],
             );
@@ -222,9 +293,7 @@ class _LearningPageState extends State<LearningPage> {
             final randomIndex = _random.nextInt(allTrueFalseTypes.length);
             body = TrueFalseAction(
               term: term,
-              distractorTerm: _getDistractorTerm(
-                _currentStep ~/ LearningActionType.values.length,
-              ),
+              distractorTerm: _getDistractorTerm(_currentStep ~/ stepsPerTerm),
               onNext: _nextStep,
               type: allTrueFalseTypes[randomIndex],
             );
@@ -242,6 +311,21 @@ class _LearningPageState extends State<LearningPage> {
               term: term,
               onNext: _nextStep,
               type: mergeTypes[randomIndex],
+            );
+            break;
+          case LearningActionType.speak:
+            // Speak action
+            final allSpeakTypes = SpeakActionType.values;
+            final speakTypes = hasQuestions
+                ? allSpeakTypes
+                : allSpeakTypes
+                      .where((t) => t != SpeakActionType.questionToTarget)
+                      .toList();
+            final randomIndex = _random.nextInt(speakTypes.length);
+            body = SpeakAction(
+              term: term,
+              onNext: _nextStep,
+              type: speakTypes[randomIndex],
             );
             break;
         }

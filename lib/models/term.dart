@@ -146,4 +146,16 @@ class Term {
   Future<void> setLearningLevel(int level) async {
     await setLevel(id, level);
   }
+
+  // Increment level for this term instance
+  static Future<void> incrementLevel(String termId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = '$_levelKeyPrefix$termId';
+    final current = prefs.getInt(key) ?? 0;
+    await prefs.setInt(key, current + 1);
+  }
+
+  Future<void> incrementLearningLevel() async {
+    await incrementLevel(id);
+  }
 }

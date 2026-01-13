@@ -1,5 +1,13 @@
 // Main learning flow action types
-enum LearningActionType { display, memory, pair, select, trueFalse, merge }
+enum LearningActionType {
+  display,
+  select,
+  trueFalse,
+  merge,
+  speak,
+  pair,
+  memory,
+}
 
 // Element types used in actions
 // visual, audio, target, question
