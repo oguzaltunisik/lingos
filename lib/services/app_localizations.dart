@@ -69,6 +69,8 @@ class AppLocalizations {
   String get actionBuildTerm => _getString('actionBuildTerm');
   String get actionTrueFalse => _getString('actionTrueFalse');
   String get tapToType => _getString('tapToType');
+  String get startLessonButton => _getString('startLessonButton');
+  String get levelLabel => _getString('levelLabel');
 
   // Topics
   String getTopicName(String topicId) {
@@ -147,6 +149,8 @@ class AppLocalizations {
     'actionBuildTerm': 'Build the term',
     'actionTrueFalse': 'True or False',
     'tapToType': 'Tap to type',
+    'startLessonButton': 'Start Lesson',
+    'levelLabel': 'Level',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -198,6 +202,8 @@ class AppLocalizations {
     'actionBuildTerm': 'Terimi Oluştur',
     'actionTrueFalse': 'Doğru mu Yanlış mı',
     'tapToType': 'Yazmak için dokun',
+    'startLessonButton': 'Derse Başla',
+    'levelLabel': 'Seviye',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -250,6 +256,8 @@ class AppLocalizations {
     'actionBuildTerm': 'Rakenna termi',
     'actionTrueFalse': 'Totta vai Tarua',
     'tapToType': 'Napauta kirjoittaaksesi',
+    'startLessonButton': 'Aloita oppitunti',
+    'levelLabel': 'Taso',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',
@@ -303,6 +311,8 @@ class AppLocalizations {
     'actionBuildTerm': 'Construire le terme',
     'actionTrueFalse': 'Vrai ou Faux',
     'tapToType': 'Appuyez pour taper',
+    'startLessonButton': 'Commencer la leçon',
+    'levelLabel': 'Niveau',
     // Language names
     'language_tr': 'Türkçe',
     'language_en': 'English',

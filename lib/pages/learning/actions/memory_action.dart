@@ -38,6 +38,7 @@ class _MemoryActionState extends State<MemoryAction> {
   int? _firstFlippedIndex;
   int? _secondFlippedIndex;
   bool _isChecking = false;
+  bool _isFirstAttempt = true; // Track if this is the first attempt
 
   @override
   void initState() {
@@ -161,8 +162,8 @@ class _MemoryActionState extends State<MemoryAction> {
         if (_matchedPairs.length == 6) {
           Future.delayed(AppDurations.Durations.fadeOutDelay, () {
             if (!mounted) return;
-            // Increase level only on successful completion (primary term is first)
-            if (widget.terms.isNotEmpty) {
+            // Increase level only on first attempt success (primary term is first)
+            if (widget.terms.isNotEmpty && _isFirstAttempt) {
               widget.terms.first.incrementLearningLevel();
             }
             widget.onNext();
@@ -172,6 +173,9 @@ class _MemoryActionState extends State<MemoryAction> {
     } else {
       // Wrong match - play sound, show red, then flip back
       SoundService.playIncorrect();
+      setState(() {
+        _isFirstAttempt = false; // Mark that first attempt failed
+      });
       Future.delayed(AppDurations.Durations.feedbackDisplay, () {
         if (!mounted) return;
         setState(() {

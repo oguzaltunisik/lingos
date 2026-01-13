@@ -36,6 +36,7 @@ class _PairActionState extends State<PairAction> {
       {}; // Track which pairs show green feedback
   final Map<int, bool> _showWrongFeedback =
       {}; // Track which pairs show red feedback
+  bool _isFirstAttempt = true; // Track if this is the first attempt
 
   @override
   void initState() {
@@ -101,8 +102,8 @@ class _PairActionState extends State<PairAction> {
         if (_matchedPairs.length == 3) {
           Future.delayed(AppDurations.Durations.fadeOutDelay, () {
             if (!mounted) return;
-            // Increase level only on successful completion (primary term is first)
-            if (widget.terms.isNotEmpty) {
+            // Increase level only on first attempt success (primary term is first)
+            if (widget.terms.isNotEmpty && _isFirstAttempt) {
               widget.terms.first.incrementLearningLevel();
             }
             widget.onNext();
@@ -117,6 +118,7 @@ class _PairActionState extends State<PairAction> {
         // Use rightIndex to track which right card was tapped, not originalRightIndex
         _showWrongFeedback[rightIndex + 10] =
             true; // Add offset to avoid conflict with left indices
+        _isFirstAttempt = false; // Mark that first attempt failed
       });
 
       // Clear red feedback after delay, but keep left card selected

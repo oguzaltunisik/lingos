@@ -46,6 +46,7 @@ class _MergeActionState extends State<MergeAction> {
   List<int> _shuffledIndices = const [];
   final List<int> _selectedOrder = [];
   String? _cachedQuestion;
+  bool _isFirstAttempt = true; // Track if this is the first attempt
 
   @override
   void initState() {
@@ -82,6 +83,7 @@ class _MergeActionState extends State<MergeAction> {
       _hasAnswered = false;
       _showFeedback = false;
       _isResultCorrect = false;
+      _isFirstAttempt = true; // Reset first attempt flag
       _cachedQuestion = cachedQuestion;
       _showTopCard = false;
       _showBottomCard = false;
@@ -241,6 +243,7 @@ class _MergeActionState extends State<MergeAction> {
       setState(() {
         _isResultCorrect = false;
         _showFeedback = true;
+        _isFirstAttempt = false; // Mark that first attempt failed
       });
       Future.delayed(AppDurations.Durations.wrongChunkFeedback, () {
         if (!mounted || currentFlow != _flowId) return;
@@ -264,8 +267,10 @@ class _MergeActionState extends State<MergeAction> {
       // Call onNext after the current frame to avoid setState during build.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          // Increase level only on successful completion
-          widget.term.incrementLearningLevel();
+          // Increase level only on first attempt success
+          if (_isFirstAttempt) {
+            widget.term.incrementLearningLevel();
+          }
           widget.onNext();
         }
       });

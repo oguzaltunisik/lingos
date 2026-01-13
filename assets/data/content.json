@@ -48,6 +48,11 @@
       "emoji": "🐴"
     },
     {
+      "id": "animals_6",
+      "topicIds": ["animals"],
+      "emoji": "🐰"
+    },
+    {
       "id": "colors_1",
       "topicIds": ["colors"],
       "emoji": "🟥"
@@ -71,6 +76,11 @@
       "id": "colors_5",
       "topicIds": ["colors"],
       "emoji": "⬛"
+    },
+    {
+      "id": "colors_6",
+      "topicIds": ["colors"],
+      "emoji": "⬜"
     },
     {
       "id": "numbers_1",
@@ -98,6 +108,11 @@
       "emoji": "5️⃣"
     },
     {
+      "id": "numbers_6",
+      "topicIds": ["numbers"],
+      "emoji": "6️⃣"
+    },
+    {
       "id": "shapes_1",
       "topicIds": ["shapes"],
       "emoji": "⚪"
@@ -123,6 +138,11 @@
       "emoji": "⭐"
     },
     {
+      "id": "shapes_6",
+      "topicIds": ["shapes"],
+      "emoji": "💎"
+    },
+    {
       "id": "directions_1",
       "topicIds": ["directions"],
       "emoji": "⬅️"
@@ -146,6 +166,11 @@
       "id": "directions_5",
       "topicIds": ["directions"],
       "emoji": "🔼"
+    },
+    {
+      "id": "directions_6",
+      "topicIds": ["directions"],
+      "emoji": "🔽"
     }
   ]
 }

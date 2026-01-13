@@ -3,6 +3,7 @@ import 'package:lingos/services/language_service.dart';
 import 'package:lingos/services/app_localizations.dart';
 import 'package:lingos/pages/learning/learning_page.dart';
 import 'package:lingos/pages/settings_page.dart';
+import 'package:lingos/pages/topic_terms_bottom_sheet.dart';
 import 'package:lingos/services/term_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -63,9 +64,20 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => LearningPage(topic: topic),
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => TopicTermsBottomSheet(
+                          topic: topic,
+                          onStartLesson: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    LearningPage(topic: topic),
+                              ),
+                            );
+                          },
                         ),
                       );
                     },

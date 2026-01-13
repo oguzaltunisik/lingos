@@ -42,6 +42,7 @@ class _SpeakActionState extends State<SpeakAction> {
   String _spokenText = '';
   String? _cachedQuestion;
   bool _isRecording = false;
+  bool _isFirstAttempt = true; // Track if this is the first attempt
 
   @override
   void initState() {
@@ -109,6 +110,7 @@ class _SpeakActionState extends State<SpeakAction> {
       _hasAnswered = false;
       _showFeedback = false;
       _isResultCorrect = false;
+      _isFirstAttempt = true; // Reset first attempt flag
       _cachedQuestion = cachedQuestion;
       _showTopCard = false;
       _showBottomCard = false;
@@ -303,6 +305,7 @@ class _SpeakActionState extends State<SpeakAction> {
       setState(() {
         _isResultCorrect = false;
         _showFeedback = true;
+        _isFirstAttempt = false; // Mark that first attempt failed
       });
       Future.delayed(AppDurations.Durations.wrongChunkFeedback, () {
         if (!mounted) return;
@@ -334,8 +337,10 @@ class _SpeakActionState extends State<SpeakAction> {
       // Call onNext after the current frame to avoid setState during build.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          // Increase level only on successful completion
-          widget.term.incrementLearningLevel();
+          // Increase level only on first attempt success
+          if (_isFirstAttempt) {
+            widget.term.incrementLearningLevel();
+          }
           widget.onNext();
         }
       });

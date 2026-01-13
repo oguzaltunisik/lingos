@@ -137,6 +137,8 @@ class _TrueFalseActionState extends State<TrueFalseAction> {
     // If compatible: true is correct
     // If not compatible: false is correct
     final isCorrect = _isCompatible ? value == true : value == false;
+    final isFirstAttempt =
+        _selectedValue == null; // First attempt if nothing selected yet
 
     setState(() {
       _selectedValue = value;
@@ -153,8 +155,10 @@ class _TrueFalseActionState extends State<TrueFalseAction> {
         setState(() {
           _hasAnswered = true;
         });
-        // Increase level only on successful completion
-        widget.term.incrementLearningLevel();
+        // Increase level only on first attempt success
+        if (isFirstAttempt) {
+          widget.term.incrementLearningLevel();
+        }
         widget.onNext();
       });
     } else {

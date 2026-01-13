@@ -44,6 +44,7 @@ class _SelectActionState extends State<SelectAction> {
   String? _nativeLanguageCode;
   List<SelectionOption> _options = const [];
   String? _cachedQuestion;
+  bool _isFirstAttempt = true; // Track if this is the first attempt
 
   @override
   void initState() {
@@ -113,6 +114,7 @@ class _SelectActionState extends State<SelectAction> {
       _cachedQuestion = cachedQuestion;
       _showTopCard = false;
       _showBottomCard = false;
+      _isFirstAttempt = true; // Reset first attempt flag
     });
 
     // Wait after screen opens
@@ -203,6 +205,7 @@ class _SelectActionState extends State<SelectAction> {
         setState(() {
           _showFeedback = false;
           _selectedIndex = null;
+          _isFirstAttempt = false; // Mark that first attempt failed
         });
       });
     }
@@ -275,8 +278,10 @@ class _SelectActionState extends State<SelectAction> {
       // Call onNext after the current frame to avoid setState during build.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          // Increase level only on successful completion
-          widget.term.incrementLearningLevel();
+          // Increase level only on first attempt success
+          if (_isFirstAttempt) {
+            widget.term.incrementLearningLevel();
+          }
           widget.onNext();
         }
       });
